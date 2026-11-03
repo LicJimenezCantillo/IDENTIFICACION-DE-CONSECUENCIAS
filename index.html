@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Una decisión lo cambia todo</title>
+<style>
+:root{
+  --bg:#0a0c1e; --bg2:#141838; --ink:#f3f5ff; --muted:#a8b0d8;
+  --pink:#ff4d8d; --mint:#4df0cf; --sun:#ffd166; --violet:#7c5cff; --blue:#4f8cff;
+  --card:rgba(255,255,255,.07); --line:rgba(255,255,255,.14);
+  --r:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Segoe UI",system-ui,-apple-system,"Trebuchet MS",Roboto,Arial,sans-serif;
+  background:var(--bg); color:var(--ink); overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:radial-gradient(1200px 700px at 15% -10%,#2a1b6e 0%,transparent 60%),
+             radial-gradient(900px 600px at 100% 110%,#6b1646 0%,transparent 55%),var(--bg);}
+#bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.35;animation:float 18s ease-in-out infinite}
+#bg i:nth-child(1){width:380px;height:380px;background:var(--violet);left:-80px;top:20%}
+#bg i:nth-child(2){width:300px;height:300px;background:var(--pink);right:-60px;top:5%;animation-delay:-6s}
+#bg i:nth-child(3){width:340px;height:340px;background:#1ec9ad;left:40%;bottom:-120px;animation-delay:-11s;opacity:.22}
+#bg:after{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:radial-gradient(circle at 50% 40%,#000 0%,transparent 75%);-webkit-mask-image:radial-gradient(circle at 50% 40%,#000 0%,transparent 75%)}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
+
+#app{position:relative;z-index:1;height:100%}
+.screen{position:absolute;inset:0;display:none}
+.screen.active{display:flex;animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- INICIO ---------- */
+#screen-start{flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;overflow:auto}
+.fork{width:min(560px,86vw);height:150px;margin-bottom:6px}
+.fork path{fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;animation:draw 2.4s ease forwards}
+.fork path:nth-child(2){animation-delay:.3s}.fork path:nth-child(3){animation-delay:.6s}.fork path:nth-child(4){animation-delay:.9s}.fork path:nth-child(5){animation-delay:1.2s}
+.fork circle{opacity:0;animation:pop .5s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.eyebrow{letter-spacing:.35em;text-transform:uppercase;font-size:.8rem;color:var(--mint);font-weight:700}
+h1.title{font-family:"Arial Black","Segoe UI",Impact,sans-serif;font-weight:900;line-height:.95;margin:10px 0 14px;font-size:clamp(2.4rem,7.2vw,5.4rem);text-transform:uppercase;letter-spacing:-.02em}
+h1.title .l1{display:block;background:linear-gradient(90deg,#fff,#cfd6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1.title .l2{display:block;background:linear-gradient(90deg,var(--pink),var(--sun) 60%,var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent;font-size:.78em}
+.sub{max-width:560px;color:var(--muted);font-size:clamp(1rem,1.6vw,1.18rem);line-height:1.5}
+.sub b{color:var(--ink)}
+.btn-main{margin-top:26px;padding:18px 44px;font-size:1.25rem;font-weight:800;letter-spacing:.04em;border-radius:999px;
+  background:linear-gradient(90deg,var(--pink),#ff8a5c);box-shadow:0 10px 40px rgba(255,77,141,.45),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .15s,box-shadow .2s}
+.btn-main:hover,.btn-main:focus-visible{transform:translateY(-2px) scale(1.03);box-shadow:0 14px 50px rgba(255,77,141,.65);outline:none}
+.btn-main:active{transform:scale(.98)}
+.btn-ghost{padding:12px 22px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-weight:600;color:var(--ink);transition:background .2s,transform .15s}
+.btn-ghost:hover,.btn-ghost:focus-visible{background:rgba(255,255,255,.14);outline:none;transform:translateY(-1px)}
+.who{margin-top:20px;display:flex;gap:10px;align-items:center;justify-content:center;color:var(--muted);font-weight:600}
+.who-b{padding:9px 20px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);font-weight:700;transition:all .2s}
+.who-b.on{border-color:var(--mint);background:rgba(77,240,207,.16);color:#fff}
+.howto{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+.howto span{background:var(--card);border:1px solid var(--line);padding:8px 14px;border-radius:999px;font-size:.9rem;color:var(--muted)}
+.seen-mini{margin-top:22px;font-size:.85rem;color:var(--muted)}
+.seen-mini b{color:var(--sun)}
+.comp{margin-top:16px;font-size:.72rem;color:#7f88b8;letter-spacing:.05em;max-width:640px}
+
+/* ---------- JUEGO ---------- */
+#screen-game{flex-direction:column}
+.hud{height:58px;flex:0 0 58px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;background:rgba(8,10,28,.55);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hud .home{font-size:.85rem;color:var(--muted);padding:8px 12px;border-radius:10px}
+.hud .home:hover{background:var(--card);color:var(--ink)}
+.pips{display:flex;align-items:center;gap:8px}
+.pip{width:34px;height:8px;border-radius:99px;background:rgba(255,255,255,.14);transition:background .4s,box-shadow .4s}
+.pip.done{background:var(--mint)}
+.pip.cur{background:var(--pink);box-shadow:0 0 14px var(--pink)}
+.hud-mid{display:flex;flex-direction:column;align-items:center;gap:5px}
+#hud-step{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+#hud-time{font-variant-numeric:tabular-nums;font-weight:700;color:var(--sun);font-size:.95rem;min-width:90px;text-align:right}
+.stage{flex:1;min-height:0;display:flex;gap:20px;padding:16px 18px 18px}
+.left{flex:1.3;min-width:0;display:flex;flex-direction:column;gap:12px;min-height:0}
+.art-wrap{flex:none;width:100%;aspect-ratio:16/9;max-height:calc(100% - 110px);margin:0 auto;position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.trail{flex:1;min-height:0;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 14px;scrollbar-width:thin;scrollbar-color:#3a3f70 transparent}
+.trail h5{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.trail ol{list-style:none;display:flex;flex-direction:column;gap:4px}
+.trail li{font-size:.84rem;color:#d3d8f5;line-height:1.3;display:flex;gap:8px}
+.trail li b{flex:0 0 18px;height:18px;border-radius:6px;background:var(--violet);display:grid;place-items:center;font-size:.7rem}
+.trail .empty{font-size:.84rem;color:#7f88b8;font-style:italic}
+.art-wrap svg{width:100%;height:100%;display:block}
+#art{position:absolute;inset:0;animation:zoom 14s ease-out both}
+@keyframes zoom{from{transform:scale(1.04)}to{transform:scale(1.0)}}
+.chip{position:absolute;left:14px;top:14px;background:rgba(8,10,28,.7);backdrop-filter:blur(6px);padding:7px 13px;border-radius:999px;font-size:.82rem;font-weight:600;border:1px solid var(--line);z-index:2}
+.art-wrap:after{content:"";position:absolute;inset:0;pointer-events:none;transition:opacity .6s;opacity:0}
+.art-wrap.tone-hot:after{opacity:1;background:radial-gradient(circle at 50% 50%,transparent 40%,rgba(255,40,80,.5) 100%);animation:pulse 1.2s ease-in-out 3}
+.art-wrap.tone-cool:after{opacity:1;background:radial-gradient(circle at 50% 50%,transparent 45%,rgba(77,240,207,.28) 100%)}
+.art-wrap.tone-dark:after{opacity:1;background:radial-gradient(circle at 50% 50%,transparent 35%,rgba(10,0,40,.65) 100%)}
+.art-wrap.shake{animation:shake .5s}
+@keyframes pulse{50%{filter:brightness(1.4)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.panel{flex:1;min-width:360px;display:flex;flex-direction:column;overflow-y:auto;padding:4px 6px 10px 2px;scrollbar-width:thin;scrollbar-color:#3a3f70 transparent}
+.kicker{font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mint);font-weight:700}
+.panel h2{font-family:"Arial Black","Segoe UI",sans-serif;font-size:clamp(1.5rem,2.6vw,2.15rem);margin:6px 0 12px;line-height:1.05}
+.story p{font-size:clamp(.98rem,1.22vw,1.1rem);line-height:1.58;margin-bottom:10px;color:#e6e9ff}
+.story p em{color:var(--sun);font-style:normal;font-weight:600}
+.story p span.say{color:#fff;font-weight:600}
+.story p.say{border-left:3px solid var(--pink);padding-left:12px;color:#fff}
+.story p.note{color:var(--muted);font-size:.95em;font-style:italic}
+.chosen{display:inline-block;background:rgba(255,77,141,.16);border:1px solid rgba(255,77,141,.5);padding:7px 14px;border-radius:12px;margin-bottom:12px;font-size:.92rem}
+.chosen b{color:var(--pink)}
+.rv{opacity:0;transform:translateY(8px);animation:rv .55s ease forwards;animation-delay:calc(var(--i)*.38s + .15s)}
+@keyframes rv{to{opacity:1;transform:none}}
+.q{margin:6px 0 10px;font-weight:800;font-size:1.05rem}
+.opts{display:flex;flex-direction:column;gap:11px;margin-top:2px;padding-bottom:6px}
+.opt{display:flex;align-items:flex-start;gap:14px;text-align:left;padding:15px 18px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.05));border:1.5px solid var(--line);
+  transition:transform .15s,border-color .2s,background .2s,box-shadow .2s;opacity:0;transform:translateY(10px);animation:rv .5s ease forwards;animation-delay:var(--d,1s)}
+.opt:hover,.opt:focus-visible{border-color:var(--mint);transform:translateY(-2px);background:linear-gradient(180deg,rgba(77,240,207,.18),rgba(77,240,207,.06));box-shadow:0 10px 30px rgba(77,240,207,.15);outline:none}
+.opt .num{flex:0 0 32px;height:32px;border-radius:10px;background:var(--violet);display:grid;place-items:center;font-weight:800;font-size:.95rem}
+.opt .lbl{font-weight:700;font-size:1.05rem;line-height:1.3}
+.opt .think{display:block;margin-top:5px;font-size:.88rem;color:var(--muted);font-weight:400;font-style:italic;line-height:1.35}
+.opt.picked{border-color:var(--pink);background:rgba(255,77,141,.2)}
+.opts.locked .opt:not(.picked){opacity:.3 !important;pointer-events:none}
+.opts.locked .opt{pointer-events:none}
+.btn-next{align-self:flex-start;margin-top:8px;padding:14px 30px;border-radius:999px;font-weight:800;background:linear-gradient(90deg,var(--violet),var(--blue));box-shadow:0 8px 30px rgba(124,92,255,.45);transition:transform .15s,box-shadow .2s;opacity:0;animation:rv .5s ease forwards;animation-delay:var(--d,1s)}
+.btn-next:hover,.btn-next:focus-visible{transform:translateY(-2px);box-shadow:0 12px 36px rgba(124,92,255,.7);outline:none}
+.keyhint{margin-top:6px;font-size:.75rem;color:#7f88b8}
+
+/* velo de transición */
+#veil{position:fixed;inset:0;z-index:50;background:radial-gradient(circle at 50% 50%,#1b1450,#05060f);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .55s}
+#veil.on{opacity:1;pointer-events:auto;cursor:pointer}
+.vcard{text-align:center;animation:vin 1.2s ease both}
+@keyframes vin{from{opacity:0;letter-spacing:.3em;transform:scale(.96)}to{opacity:1;letter-spacing:0;transform:none}}
+.vk{color:var(--mint);letter-spacing:.35em;text-transform:uppercase;font-size:.8rem;font-weight:700}
+.vt{font-family:"Arial Black",sans-serif;font-size:clamp(2.4rem,7vw,4.6rem);margin:8px 0;background:linear-gradient(90deg,var(--sun),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.vp{color:var(--muted);font-size:1.1rem}
+
+/* ---------- FINAL ---------- */
+#screen-end{flex-direction:column;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#3a3f70 transparent}
+.end-in{width:min(980px,100%);margin:0 auto;padding:22px 18px 60px}
+.end-hero{position:relative;border-radius:26px;overflow:hidden;border:1px solid var(--line);min-height:300px;box-shadow:0 24px 70px rgba(0,0,0,.5)}
+.end-hero{background:radial-gradient(circle at 50% 0%,rgba(124,92,255,.35),rgba(8,10,28,.9) 70%)}
+.end-hero svg{display:block;width:min(100%,640px);height:auto;aspect-ratio:16/9;margin:0 auto;border-radius:0 0 22px 22px}
+.end-head{padding:22px 26px 26px;background:rgba(8,10,28,.85)}
+.end-tag{display:inline-block;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;font-weight:800;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.14);margin-bottom:8px}
+.end-head h1{font-family:"Arial Black","Segoe UI",sans-serif;font-size:clamp(1.8rem,5vw,3.2rem);line-height:1;text-transform:uppercase;letter-spacing:-.01em}
+.end-head p{margin-top:8px;color:#dfe3ff;font-size:1.05rem}
+.sec{margin-top:26px}
+.sec h3{font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;color:var(--mint);margin-bottom:12px;font-weight:800}
+.sec .story p{font-size:1.08rem;line-height:1.65}
+.timeline{list-style:none;position:relative;padding-left:26px}
+.timeline:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--pink),var(--violet),var(--mint))}
+.timeline li{position:relative;margin-bottom:12px;background:var(--card);border:1px solid var(--line);padding:11px 14px;border-radius:14px}
+.timeline li:before{content:"";position:absolute;left:-23px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:3px solid var(--pink)}
+.timeline small{display:block;color:var(--muted);font-size:.74rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:2px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.card h4{font-size:.95rem;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.card p{font-size:.95rem;line-height:1.5;color:#d9ddf7}
+.echo{list-style:none}
+.echo li{padding:10px 14px;border-left:3px solid var(--sun);background:rgba(255,209,102,.08);border-radius:0 12px 12px 0;margin-bottom:8px;line-height:1.45}
+.think-list{list-style:none;counter-reset:q}
+.think-list li{counter-increment:q;position:relative;padding:12px 14px 12px 46px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:9px;line-height:1.45}
+.think-list li:before{content:counter(q);position:absolute;left:12px;top:11px;width:24px;height:24px;border-radius:8px;background:var(--violet);display:grid;place-items:center;font-weight:800;font-size:.85rem}
+.grid-end{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px}
+.ge{padding:10px 12px;border-radius:12px;border:1px dashed var(--line);font-size:.86rem;color:#7f88b8;min-height:52px;display:flex;align-items:center}
+.ge.on{border:1px solid rgba(77,240,207,.5);background:rgba(77,240,207,.08);color:var(--ink);font-weight:600}
+.ge.now{border-color:var(--pink);background:rgba(255,77,141,.16);box-shadow:0 0 0 2px rgba(255,77,141,.3)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.actions .btn-main{margin-top:0;padding:15px 34px;font-size:1.1rem}
+
+@media (max-width:880px){
+  body{overflow:auto}
+  .stage{flex-direction:column;overflow-y:auto;gap:12px}
+  .left{flex:none}
+  .art-wrap{max-height:none}
+  .trail{display:none}
+  .panel{flex:none;overflow:visible;min-width:0}
+  .hud-mid{gap:3px}.pip{width:22px}
+  #hud-time{min-width:70px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01s !important;animation-delay:0s !important;transition-duration:.01s !important}
+}
+</style>
+</head>
+<body>
+<div id="bg"><i></i><i></i><i></i></div>
+
+<main id="app">
+  <!-- INICIO -->
+  <section id="screen-start" class="screen active">
+    <svg class="fork" viewBox="0 0 560 150" aria-hidden="true">
+      <path d="M280 148 L280 80" stroke="#fff"/>
+      <path d="M280 80 C280 50 120 70 70 14" stroke="#ff4d8d"/>
+      <path d="M280 80 C280 50 200 50 190 10" stroke="#ffd166"/>
+      <path d="M280 80 C280 50 360 50 370 10" stroke="#4df0cf"/>
+      <path d="M280 80 C280 50 440 70 490 14" stroke="#7c5cff"/>
+      <circle cx="70" cy="14" r="7" fill="#ff4d8d" style="animation-delay:1.8s"/>
+      <circle cx="190" cy="10" r="7" fill="#ffd166" style="animation-delay:2s"/>
+      <circle cx="370" cy="10" r="7" fill="#4df0cf" style="animation-delay:2.2s"/>
+      <circle cx="490" cy="14" r="7" fill="#7c5cff" style="animation-delay:2.4s"/>
+      <circle cx="280" cy="80" r="9" fill="#fff"/>
+    </svg>
+    <div class="eyebrow">Aventura narrativa · Ética y Valores</div>
+    <h1 class="title"><span class="l1">Una decisión</span><span class="l2">lo cambia todo</span></h1>
+    <p class="sub">Eres estudiante de décimo, tienes 16 años y hoy es un viernes que parece normal. <b>Tomarás decisiones</b> y verás qué pasa después, hoy y más adelante. No hay respuestas correctas: <b>hay consecuencias</b>.</p>
+    <div class="who"><span>Tú eres:</span><button class="who-b on" data-g="chico">👦 Chico</button><button class="who-b" data-g="chica">👧 Chica</button></div>
+    <button class="btn-main" id="btn-start">▶ Nueva partida</button>
+    <div class="howto"><span>🎯 5 decisiones</span><span>🔀 Muchos caminos</span><span>🏁 12 finales distintos</span><span>⌨️ Puedes usar las teclas 1, 2, 3</span></div>
+    <div class="seen-mini">Finales descubiertos: <b id="seen-count">0</b> / 12</div>
+    <div class="comp">Pensar antes de actuar · Identificar consecuencias · Entender cómo se aumentan o se apagan los conflictos · Proponer alternativas responsables</div>
+  </section>
+
+  <!-- JUEGO -->
+  <section id="screen-game" class="screen">
+    <header class="hud">
+      <button class="home" id="btn-home" title="Volver al inicio">⟵ Inicio</button>
+      <div class="hud-mid"><div class="pips" id="pips"></div><div id="hud-step"></div></div>
+      <div id="hud-time"></div>
+    </header>
+    <div class="stage">
+      <div class="left">
+        <div class="art-wrap" id="art-wrap"><div class="chip" id="chip"></div><div id="art"></div></div>
+        <div class="trail" id="trail"></div>
+      </div>
+      <div class="panel" id="panel" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- FINAL -->
+  <section id="screen-end" class="screen"><div class="end-in" id="end-in"></div></section>
+</main>
+<div id="veil" role="presentation"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   UNA DECISIÓN LO CAMBIA TODO — aventura narrativa (un solo archivo)
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const STORE = 'udlc_finales_v1';
+function loadSeen(){ try{ return JSON.parse(localStorage.getItem(STORE)||'[]'); }catch(e){ return []; } }
+function saveSeen(a){ try{ localStorage.setItem(STORE, JSON.stringify(a)); }catch(e){} }
+
+/* ---------------------------------------------------------------------
+   ESTADO
+   --------------------------------------------------------------------- */
+let S = null;
+function newState(){ return { step:0, d:{}, heat:0, f:{}, log:[], imp:0, av:0, fails:0 }; }
+/* Género del jugador: la pareja siempre es del sexo opuesto */
+const G = { chico:true };
+const D  = ()=> G.chico ? 'Daniela' : 'Daniel';          // nombre de la pareja
+const dA = ()=> G.chico ? 'a' : 'o';                      // terminación de adjetivos de la pareja
+const ME = o=>Object.assign({shirt:'#4f8cff',hs:G.chico?'short':'long',hair:G.chico?'#241b2f':'#5a3320'},o||{});
+const DANI = o=>Object.assign(G.chico?{shirt:'#a56bff',hs:'long',hair:'#2a1a3a',skin:'#d9a07a'}:{shirt:'#7c5cff',hs:'short',hair:'#1b1b1b',skin:'#d9a07a'},o||{});
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* =====================================================================
+   ILUSTRACIONES (SVG)
+   ===================================================================== */
+function person(x, base, sc, o){
+  o = o || {};
+  const skin=o.skin||'#f1c6a0', shirt=o.shirt||'#5b7cfa', hair=o.hair||'#241b2f', pants=o.pants||'#272c4d';
+  const flip=o.flip||1, mood=o.mood||'neutral', hs=o.hs||'short', pose=o.pose||'down';
+  const brows = mood==='angry' ? `<path d="M-13 -8 L-4 -4 M13 -8 L4 -4" stroke="${hair}" stroke-width="2.6" stroke-linecap="round"/>`
+    : (mood==='worried'||mood==='sad') ? `<path d="M-13 -4 L-4 -8 M13 -4 L4 -8" stroke="${hair}" stroke-width="2.6" stroke-linecap="round"/>` : '';
+  const mouths = { neutral:'M-6 11 L6 11', smirk:'M-6 11 Q2 17 8 8', angry:'M-7 15 Q0 8 7 15', worried:'M-6 14 Q0 9 6 14', happy:'M-8 8 Q0 18 8 8', sad:'M-6 14 Q0 9 6 14' };
+  const mouth = `<path d="${mouths[mood]||mouths.neutral}" stroke="#3b2630" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  const hairs = {
+    short:`<path d="M-23 -2 Q-26 -31 0 -30 Q26 -31 23 -2 Q15 -16 0 -15 Q-15 -16 -23 -2Z" fill="${hair}"/>`,
+    long:`<path d="M-23 -2 Q-26 -31 0 -30 Q26 -31 23 -2 Q15 -16 0 -15 Q-15 -16 -23 -2Z" fill="${hair}"/><rect x="-27" y="-8" width="11" height="44" rx="5" fill="${hair}"/><rect x="16" y="-8" width="11" height="44" rx="5" fill="${hair}"/>`,
+    curly:`<g fill="${hair}"><circle cx="-16" cy="-17" r="11"/><circle cx="0" cy="-24" r="12"/><circle cx="16" cy="-17" r="11"/><circle cx="-23" cy="-4" r="8"/><circle cx="23" cy="-4" r="8"/></g>`,
+    cap:`<path d="M-23 -6 Q-24 -32 0 -32 Q24 -32 23 -6Z" fill="${hair}"/><rect x="-4" y="-9" width="36" height="8" rx="4" fill="${hair}"/>`,
+    bun:`<path d="M-23 -2 Q-26 -31 0 -30 Q26 -31 23 -2 Q15 -16 0 -15 Q-15 -16 -23 -2Z" fill="${hair}"/><circle cx="0" cy="-35" r="9" fill="${hair}"/>`,
+    bald:''
+  };
+  const arms = {
+    down:[['M-24 32 Q-35 54 -30 78',-30,78],['M24 32 Q35 54 30 78',30,78]],
+    phone:[['M-24 32 Q-35 54 -30 78',-30,78],['M24 32 Q48 28 44 2',44,2]],
+    shove:[['M-24 32 Q-35 54 -30 78',-30,78],['M24 32 Q50 38 66 32',66,32]],
+    up:[['M-24 32 Q-48 28 -45 0',-45,0],['M24 32 Q48 28 45 0',45,0]],
+    grab:[['M-24 32 Q-35 54 -30 78',-30,78],['M24 32 Q50 30 68 30',68,30]],
+    hands:[['M-24 32 Q-30 56 -6 60',-6,60],['M24 32 Q30 56 6 60',6,60]]
+  };
+  const ar = (arms[pose]||arms.down).map(a=>`<path d="${a[0]}" stroke="${shirt}" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="${a[1]}" cy="${a[2]}" r="6.5" fill="${skin}"/>`).join('');
+  const phone = pose==='phone' ? `<rect x="40" y="-14" width="13" height="22" rx="3" fill="#10152e" stroke="#9fe8ff" stroke-width="1.5"/>` : '';
+  return `<g transform="translate(${x},${base-118*sc}) scale(${flip*sc},${sc})">
+    <ellipse cx="0" cy="119" rx="40" ry="7" fill="rgba(0,0,0,.28)"/>
+    <rect x="-17" y="70" width="14" height="48" rx="6" fill="${pants}"/><rect x="3" y="70" width="14" height="48" rx="6" fill="${pants}"/>
+    <path d="M-28 76 Q-31 24 0 22 Q31 24 28 76Z" fill="${shirt}"/>
+    ${ar}${phone}
+    <rect x="-5" y="12" width="10" height="14" fill="${skin}"/>
+    <circle cx="0" cy="0" r="22" fill="${skin}"/>
+    ${hairs[hs]!==undefined?hairs[hs]:hairs.short}
+    <circle cx="-8" cy="0" r="2.6" fill="#2a1d22"/><circle cx="8" cy="0" r="2.6" fill="#2a1d22"/>
+    ${brows}${mouth}
+  </g>`;
+}
+function bubble(x,y,w,h,txt,fill,col,fs){
+  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill||'#fff'}"/><path d="M${x+22} ${y+h-1} l-6 12 l16 -12z" fill="${fill||'#fff'}"/>
+  <text x="${x+w/2}" y="${y+h/2+5}" text-anchor="middle" font-size="${fs||16}" font-weight="700" fill="${col||'#222'}">${txt}</text></g>`;
+}
+function windows(x,y,cols,rows,w,h,gx,gy,fill){
+  let s='';
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++) s+=`<rect x="${x+c*gx}" y="${y+r*gy}" width="${w}" height="${h}" rx="3" fill="${fill}"/>`;
+  return s;
+}
+const SVG_OPEN = (id,c1,c2,c3) => `<svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset=".65" stop-color="${c2}"/><stop offset="1" stop-color="${c3||c2}"/></linearGradient></defs><rect width="800" height="450" fill="url(#${id})"/>`;
+
+const ART = {
+  room(){ return SVG_OPEN('r1','#1d1b4f','#5a3a8a','#c95a8a')+
+    `<circle cx="640" cy="120" r="60" fill="#ffd9a0" opacity=".85"/><rect x="560" y="60" width="170" height="170" rx="10" fill="none" stroke="#2c2160" stroke-width="10"/><path d="M645 60v170M560 145h170" stroke="#2c2160" stroke-width="6"/>
+    <rect y="330" width="800" height="120" fill="#201845"/><rect x="40" y="250" width="300" height="110" rx="14" fill="#35286b"/><rect x="40" y="235" width="300" height="40" rx="14" fill="#4a3a8f"/>
+    <rect x="440" y="270" width="260" height="14" rx="4" fill="#3b2e75"/><rect x="460" y="284" width="12" height="80" fill="#3b2e75"/><rect x="668" y="284" width="12" height="80" fill="#3b2e75"/>
+    <g transform="rotate(-6 540 262)"><rect x="500" y="228" width="90" height="42" rx="4" fill="#ff7aa2"/><text x="545" y="255" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">FÍSICA</text></g>
+    ${person(180,372,1.25,ME({mood:'worried',pose:'phone'}))}
+    <g><rect x="250" y="120" width="230" height="64" rx="16" fill="#fff"/><path d="M270 183 l-12 22 l30 -22z" fill="#fff"/><text x="365" y="148" text-anchor="middle" font-size="15" font-weight="700" fill="#222">Hoy hablamos de lo de la salida.</text><text x="365" y="168" text-anchor="middle" font-size="15" font-weight="700" fill="#222">Ya lo pensaste, ¿cierto? 🙄</text></g>
+    <text x="620" y="400" font-size="40" font-weight="900" fill="#fff" opacity=".12">6:40</text></svg>`; },
+
+  gate(){ return SVG_OPEN('g1','#ffb36b','#ff7aa2','#6c5ce7')+
+    `<circle cx="640" cy="120" r="50" fill="#fff3c4" opacity=".92"/>
+    <rect x="40" y="130" width="540" height="200" fill="#2d2a4a"/><rect x="200" y="78" width="220" height="62" rx="6" fill="#3d3770"/>
+    <text x="310" y="118" text-anchor="middle" font-size="26" font-weight="900" fill="#ffd166" letter-spacing="4">COLEGIO</text>
+    ${windows(70,155,8,3,40,38,64,52,'#ffd9a0')}
+    <rect y="330" width="800" height="120" fill="#1b1933"/><rect y="330" width="800" height="5" fill="#ff4d8d" opacity=".6"/>
+    <g stroke="#0e0d22" stroke-width="5">${[620,650,680,710,740,770].map(x=>`<path d="M${x} 210V335"/>`).join('')}<path d="M610 230H800M610 290H800"/></g>
+    ${person(120,405,1.2,{shirt:'#3ddc97',hs:'long',hair:'#4a2b1a',mood:'worried',skin:'#e8b48c'})}
+    ${person(330,420,1.5,ME({mood:'worried'}))}
+    ${person(520,410,1.3,{shirt:'#e5484d',hs:'cap',hair:'#1b1b1b',mood:'smirk',pose:'shove',flip:-1,skin:'#d9a07a'})}
+    ${person(620,405,1.1,{shirt:'#f5a623',hs:'curly',hair:'#222',mood:'smirk',pose:'phone',skin:'#c58a63'})}
+    ${person(690,408,1.05,{shirt:'#9b5cf6',hs:'short',hair:'#2d1c10',mood:'smirk'})}
+    ${bubble(455,150,190,50,'¿Toda la noche chateando?','#fff','#222',14)}
+    </svg>`; },
+
+  exam(){ return SVG_OPEN('e1','#27305e','#3a4380','#2a2f5a')+
+    `<rect x="60" y="40" width="380" height="170" rx="8" fill="#1f5d4b" stroke="#c9a46a" stroke-width="8"/>
+    <text x="250" y="95" text-anchor="middle" font-size="34" font-weight="900" fill="#e8fff5" opacity=".95">FÍSICA</text>
+    <text x="250" y="140" text-anchor="middle" font-size="22" fill="#e8fff5" opacity=".75">F = m · a     v = d / t</text><text x="250" y="178" text-anchor="middle" font-size="20" fill="#e8fff5" opacity=".6">E = ½ m v²</text>
+    <circle cx="640" cy="90" r="42" fill="#f4f1ff"/><circle cx="640" cy="90" r="36" fill="none" stroke="#2a2f5a" stroke-width="3"/><path d="M640 90V62M640 90L660 100" stroke="#2a2f5a" stroke-width="4" stroke-linecap="round"/>
+    <rect y="360" width="800" height="90" fill="#22264d"/>
+    ${person(130,305,.85,{shirt:'#2b9d6a',hs:'short',hair:'#3a2a1a',skin:'#d9a07a'})}
+    ${person(250,360,1.15,{shirt:'#e5484d',hs:'cap',hair:'#1b1b1b',mood:'smirk',skin:'#d9a07a',pose:'hands'})}
+    ${person(560,360,1.15,{shirt:'#3ddc97',hs:'long',hair:'#4a2b1a',skin:'#e8b48c',pose:'hands'})}
+    ${person(400,380,1.35,ME({mood:'worried',pose:'hands'}))}
+    <g><rect x="335" y="335" width="130" height="82" rx="8" fill="#10152e"/><rect x="342" y="342" width="116" height="68" rx="5" fill="#fff"/><text x="400" y="385" text-anchor="middle" font-size="32" font-weight="900" fill="#e5484d">?</text></g>
+    <g><rect x="495" y="345" width="130" height="72" rx="8" fill="#10152e"/><rect x="502" y="352" width="116" height="58" rx="5" fill="#fff"/><path d="M512 368h86M512 382h70M512 396h80" stroke="#6a7ad9" stroke-width="3"/></g>
+    <g><rect x="185" y="345" width="130" height="72" rx="8" fill="#10152e"/></g></svg>`; },
+
+  patio(){ return SVG_OPEN('p1','#6dd5ff','#b6f0ff','#ffe9b0')+
+    `<circle cx="680" cy="90" r="46" fill="#fff6bf"/>
+    <circle cx="110" cy="190" r="70" fill="#2fbf71"/><circle cx="170" cy="160" r="55" fill="#27a862"/><rect x="100" y="230" width="20" height="120" fill="#6b4a2e"/>
+    <circle cx="700" cy="220" r="60" fill="#2fbf71"/><rect x="692" y="260" width="18" height="90" fill="#6b4a2e"/>
+    <rect y="340" width="800" height="110" fill="#e8c88a"/><rect y="340" width="800" height="8" fill="#d4a95f"/>
+    <rect x="240" y="300" width="320" height="16" rx="6" fill="#8a5a36"/><rect x="255" y="316" width="12" height="40" fill="#5c3a22"/><rect x="533" y="316" width="12" height="40" fill="#5c3a22"/>
+    ${person(310,370,1.4,ME({mood:'worried',flip:1}))}
+    ${person(500,370,1.4,DANI({mood:'neutral',flip:-1,pose:'grab'}))}
+    <g><circle cx="402" cy="130" r="38" fill="#fff"/><path d="M402 128 c-14 -22 -34 -2 -14 16 l14 12 l14 -12 c20 -18 0 -38 -14 -16z" fill="#ff4d8d"/><path d="M398 112 l6 14 l-8 8 l8 10" stroke="#fff" stroke-width="3" fill="none" opacity=".9"/></g>
+    <rect x="30" y="30" width="170" height="40" rx="12" fill="rgba(255,255,255,.75)"/><text x="115" y="56" text-anchor="middle" font-size="16" font-weight="800" fill="#2a2f5a">12:15 p. m.</text></svg>`; },
+
+  phone(p){
+    p = p||{};
+    const t = p.title||'10°B 🔥', b = p.badge||'99+';
+    const bub = (x,y,w,c,r)=>`<rect x="${x}" y="${y}" width="${w}" height="26" rx="13" fill="${c}"/>${r?`<circle cx="${x+w-10}" cy="${y+26}" r="9" fill="#fff"/><text x="${x+w-10}" y="${y+30}" font-size="11" text-anchor="middle">😂</text>`:''}`;
+    return SVG_OPEN('f1','#1a1350','#2d1b6e','#4a1a5e')+
+    `<g opacity=".5">${[[90,80],[700,120],[140,330],[660,330],[560,60]].map((a,i)=>`<circle cx="${a[0]}" cy="${a[1]}" r="${14+i*3}" fill="${['#ff4d8d','#4df0cf','#ffd166','#7c5cff','#ff4d8d'][i]}" opacity=".35"/>`).join('')}</g>
+    <g transform="translate(275,18) rotate(-4 125 205)">
+    <rect width="250" height="414" rx="34" fill="#0b0d22" stroke="#9fa8ff" stroke-width="4"/><rect x="12" y="14" width="226" height="386" rx="24" fill="#161a3d"/>
+    <rect x="12" y="14" width="226" height="52" rx="24" fill="#26307a"/><circle cx="42" cy="40" r="14" fill="#ff4d8d"/><text x="68" y="46" font-size="16" font-weight="800" fill="#fff">${t}</text>
+    ${bub(28,84,140,'#2e3a8c',true)}${bub(70,120,150,'#7c5cff',false)}${bub(28,156,176,'#2e3a8c',true)}${bub(100,192,120,'#7c5cff',false)}${bub(28,228,150,'#2e3a8c',true)}${bub(60,264,160,'#ff4d8d',false)}${bub(28,300,110,'#2e3a8c',true)}
+    <rect x="28" y="348" width="150" height="36" rx="18" fill="#242a63"/><circle cx="198" cy="366" r="14" fill="#4df0cf"/>
+    </g>
+    <circle cx="520" cy="46" r="26" fill="#ff2e63"/><text x="520" y="52" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${b}</text></svg>`; },
+
+  gateEve(){ return SVG_OPEN('v1','#2b1b5e','#c2476b','#ff9a5c')+
+    `<circle cx="400" cy="250" r="90" fill="#ffcf8a" opacity=".25"/>
+    <g fill="#150f33"><rect x="0" y="150" width="120" height="220"/><rect x="130" y="110" width="90" height="260"/><rect x="590" y="130" width="100" height="240"/><rect x="700" y="170" width="100" height="200"/></g>
+    ${windows(12,170,3,4,22,26,34,44,'#ffd98a')}${windows(145,130,2,5,26,24,36,46,'#ffd98a')}${windows(606,150,2,4,26,26,38,46,'#ffd98a')}
+    <rect y="360" width="800" height="90" fill="#150f33"/><rect y="360" width="800" height="4" fill="#ff4d8d" opacity=".7"/>
+    <g fill="#0d0a24">${[70,150,235,590,670,745,30,320,480].map((x,i)=>`<g><circle cx="${x}" cy="${300+(i%3)*8}" r="15"/><rect x="${x-18}" y="${314+(i%3)*8}" width="36" height="70" rx="12"/><rect x="${x+14}" y="${290+(i%3)*8}" width="9" height="16" rx="2" fill="#9fe8ff"/></g>`).join('')}</g>
+    ${person(325,405,1.5,ME({mood:'worried',pose:'up'}))}
+    ${person(480,405,1.5,{shirt:'#e5484d',hs:'cap',hair:'#1b1b1b',mood:'angry',pose:'shove',flip:-1,skin:'#d9a07a'})}
+    <g stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"><path d="M395 190l-10 -26M410 188v-30M425 190l10 -26"/></g>
+    <text x="400" y="70" text-anchor="middle" font-size="22" font-weight="900" fill="#fff" opacity=".85" letter-spacing="3">¡PEELEN! ¡PEELEN!</text></svg>`; },
+
+  fall(){ return SVG_OPEN('h1','#dfe7ff','#c3cff5','#a9b6e8')+
+    `<g fill="#6a79c7">${[40,150,260,370,480,590,700].map(x=>`<rect x="${x}" y="70" width="100" height="220" rx="6"/>`).join('')}</g>
+    <g fill="#8896e0">${[40,150,260,370,480,590,700].map(x=>`<rect x="${x+6}" y="76" width="88" height="100" rx="4"/><rect x="${x+6}" y="182" width="88" height="100" rx="4"/>`).join('')}</g>
+    <rect y="340" width="800" height="110" fill="#e9dcc0"/><rect y="340" width="800" height="6" fill="#cdb98f"/>
+    <g transform="translate(300,372) rotate(-18) scale(.55)"><rect width="70" height="130" rx="10" fill="#10152e" stroke="#7c8ad9" stroke-width="3"/><rect x="6" y="8" width="58" height="114" rx="6" fill="#26307a"/><path d="M8 20 L34 58 L26 78 L60 118 M34 58 L62 40 M26 78 L10 104" stroke="#fff" stroke-width="2" fill="none"/></g>
+    <text x="400" y="60" text-anchor="middle" font-size="64" font-weight="900" fill="#e5484d" opacity=".85">¡CRASH!</text>
+    ${person(180,330,1.3,ME({mood:'angry',pose:'up'}))}
+    ${person(560,350,1.0,{shirt:'#f5a623',hs:'curly',hair:'#222',mood:'worried',pose:'up',flip:-1,skin:'#c58a63'})}
+    ${person(690,350,1.0,{shirt:'#3ddc97',hs:'bun',hair:'#4a2b1a',mood:'smirk',pose:'phone',skin:'#e8b48c'})}
+    ${person(740,355,.9,{shirt:'#9b5cf6',hs:'cap',hair:'#2d1c10',mood:'smirk'})}
+    </svg>`; }
+};
+
+/* ----- Ilustraciones de los finales ----- */
+const END_ART = {
+  cabeza_fria(){ return SVG_OPEN('x1','#ffd9a0','#ff9a7a','#7c5cff')+`<circle cx="400" cy="270" r="110" fill="#fff3c4"/><circle cx="400" cy="270" r="80" fill="#ffe08a"/>
+    <rect y="270" width="800" height="180" fill="#2d2b6e"/><g stroke="#ffd9a0" stroke-width="3" opacity=".6"><path d="M250 300h300M290 322h220M330 344h140"/></g>
+    ${person(400,300,.9,ME({mood:'happy',pose:'up'}))}</svg>`; },
+  nota_baja(){ return SVG_OPEN('x2','#2a3c7a','#4b5fc0','#7c5cff')+`<rect x="270" y="50" width="260" height="340" rx="14" fill="#fff" transform="rotate(-4 400 220)"/>
+    <g transform="rotate(-4 400 220)"><path d="M300 110h200M300 150h170M300 190h200M300 230h140" stroke="#c9cfee" stroke-width="6"/><circle cx="400" cy="320" r="48" fill="none" stroke="#e5484d" stroke-width="7"/><text x="400" y="336" text-anchor="middle" font-size="44" font-weight="900" fill="#e5484d">2,6</text></g>
+    <path d="M610 400 L610 250 M575 285 L610 245 L645 285" stroke="#4df0cf" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="130" cy="110" r="52" fill="#ffd166" opacity=".9"/></svg>`; },
+  no_costo(){ return SVG_OPEN('x3','#1a1650','#4a2a7a','#c2476b')+`<rect y="340" width="800" height="110" fill="#14103a"/><rect x="0" y="330" width="800" height="6" fill="#ff4d8d" opacity=".5"/>
+    <rect x="460" y="300" width="230" height="14" rx="6" fill="#7a4a2e"/><rect x="480" y="314" width="10" height="38" fill="#5c3a22"/><rect x="660" y="314" width="10" height="38" fill="#5c3a22"/>
+    ${person(210,372,1.5,ME({mood:'neutral'}))}<circle cx="570" cy="260" r="3" fill="#fff"/>
+    <g stroke="#fff" stroke-width="3" stroke-dasharray="3 12" stroke-linecap="round" opacity=".5"><path d="M300 250H440"/></g>
+    <path d="M565 150 c-30 -40 -80 0 -30 40 l30 26 l30 -26 c50 -40 0 -80 -30 -40z" fill="none" stroke="#ff4d8d" stroke-width="5" stroke-dasharray="10 8"/></svg>`; },
+  silencios(){ return SVG_OPEN('x4','#242a4a','#3a4066','#1b1d38')+
+    [[90,80,170],[300,150,150],[520,70,190],[190,260,170],[450,270,160],[640,220,130]].map((b,i)=>`<g opacity="${.9-i*.1}"><rect x="${b[0]}" y="${b[1]}" width="${b[2]}" height="64" rx="22" fill="#e9ecff"/><path d="M${b[0]+26} ${b[1]+62} l-8 16 l24 -16z" fill="#e9ecff"/><circle cx="${b[0]+b[2]/2-20}" cy="${b[1]+32}" r="6" fill="#8b93c8"/><circle cx="${b[0]+b[2]/2}" cy="${b[1]+32}" r="6" fill="#8b93c8"/><circle cx="${b[0]+b[2]/2+20}" cy="${b[1]+32}" r="6" fill="#8b93c8"/></g>`).join('')+`</svg>`; },
+  cinco(){ return SVG_OPEN('x5','#3a0f2e','#a8244a','#ff6a3d')+`<circle cx="400" cy="225" r="150" fill="#fff6f0"/><circle cx="400" cy="225" r="150" fill="none" stroke="#2a0a22" stroke-width="12"/>
+    ${[...Array(12)].map((_,i)=>{const a=i*Math.PI/6;return `<path d="M${400+Math.sin(a)*128} ${225-Math.cos(a)*128} L${400+Math.sin(a)*144} ${225-Math.cos(a)*144}" stroke="#2a0a22" stroke-width="6" stroke-linecap="round"/>`}).join('')}
+    <path d="M400 225 L400 120" stroke="#e5484d" stroke-width="8" stroke-linecap="round"/><path d="M400 225 L470 262" stroke="#2a0a22" stroke-width="10" stroke-linecap="round"/><circle cx="400" cy="225" r="12" fill="#2a0a22"/>
+    <text x="400" y="400" text-anchor="middle" font-size="26" font-weight="900" fill="#fff" opacity=".7" letter-spacing="6">5 SEGUNDOS</text></svg>`; },
+  mensaje(){ return SVG_OPEN('x6','#0f1a4a','#1f2f7a','#3a1f6a')+
+    [60,100,140,180].map((r,i)=>`<circle cx="400" cy="225" r="${r+60}" fill="none" stroke="#4df0cf" stroke-width="2" opacity="${.5-i*.1}"/>`).join('')+
+    `<g transform="translate(330,100)"><rect width="140" height="250" rx="22" fill="#0b0d22" stroke="#9fa8ff" stroke-width="3"/><rect x="8" y="10" width="124" height="230" rx="16" fill="#1b2160"/><rect x="18" y="40" width="90" height="30" rx="14" fill="#7c5cff"/><rect x="30" y="86" width="96" height="30" rx="14" fill="#ff4d8d"/><rect x="18" y="132" width="70" height="30" rx="14" fill="#7c5cff"/><text x="70" y="208" text-anchor="middle" font-size="40">📸</text></g>
+    <text x="400" y="420" text-anchor="middle" font-size="18" font-weight="800" fill="#cfd6ff" opacity=".8" letter-spacing="4">ENVIADO ✓✓</text></svg>`; },
+  no_hablaron(){ return SVG_OPEN('x7','#3a2350','#6b3a74','#c2476b')+
+    `<g><rect x="90" y="110" width="250" height="110" rx="30" fill="#fff"/><path d="M280 218 l24 30 l-4 -34z" fill="#fff"/><text x="215" y="182" text-anchor="middle" font-size="64" font-weight="900" fill="#7c5cff">?</text></g>
+    <g><rect x="460" y="180" width="250" height="110" rx="30" fill="#ffd9ec"/><path d="M510 288 l-24 30 l4 -34z" fill="#ffd9ec"/><text x="585" y="252" text-anchor="middle" font-size="64" font-weight="900" fill="#ff4d8d">?</text></g>
+    <path d="M345 170 C 400 140 410 250 455 235" stroke="#fff" stroke-width="3" stroke-dasharray="4 10" fill="none" stroke-linecap="round" opacity=".6"/></svg>`; },
+  lograste(){ return SVG_OPEN('x8','#1d2a5c','#3c4aa0','#6a3aa0')+
+    `<rect x="394" y="120" width="12" height="260" fill="#cfd6ff"/><rect x="330" y="372" width="140" height="16" rx="6" fill="#cfd6ff"/><rect x="150" y="150" width="500" height="10" rx="5" fill="#cfd6ff" transform="rotate(-7 400 155)"/>
+    <g transform="rotate(-7 400 155)"><path d="M170 158 L130 270 H300 L260 158" fill="none" stroke="#cfd6ff" stroke-width="3"/><path d="M640 158 L600 270 H770 L730 158" fill="none" stroke="#cfd6ff" stroke-width="3" transform="translate(-100,0)"/></g>
+    <g transform="translate(120,205) rotate(0)"><rect x="0" y="40" width="170" height="26" rx="8" fill="#ffd166"/><text x="85" y="35" text-anchor="middle" font-size="46" font-weight="900" fill="#ffd166">4,2 ★</text></g>
+    <g transform="translate(470,222)"><path d="M20 20 Q85 -20 150 20 L165 90 Q85 120 5 90Z" fill="#14123a" stroke="#7c5cff" stroke-width="3"/><text x="85" y="72" text-anchor="middle" font-size="26" font-weight="800" fill="#cfd6ff">¿y ahora?</text></g></svg>`; },
+  broma(){ return SVG_OPEN('x9','#ffb36b','#ff6a8a','#4a2a8a')+
+    [40,80,120].map((r,i)=>`<circle cx="200" cy="300" r="${r}" fill="none" stroke="#fff" stroke-width="3" opacity="${.7-i*.2}"/>`).join('')+
+    `<path d="M200 300 C 300 60, 650 60, 640 250" stroke="#fff" stroke-width="5" fill="none" stroke-dasharray="3 14" stroke-linecap="round"/>
+    <path d="M640 250 C 650 330, 330 390, 215 312" stroke="#ffd166" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M232 292 L206 312 L240 322z" fill="#ffd166"/>
+    <circle cx="200" cy="300" r="10" fill="#fff"/><text x="400" y="430" text-anchor="middle" font-size="18" font-weight="800" fill="#fff" opacity=".8" letter-spacing="5">IDA Y VUELTA</text></svg>`; },
+  domino(){ return SVG_OPEN('x10','#1a0b2e','#6a1a4a','#e5484d')+
+    [0,1,2,3,4,5,6,7].map(i=>`<g transform="translate(${70+i*86},${330}) rotate(${i<3?0:(i-2)*13} 0 0)" transform-origin="0 0"><rect width="34" height="${130-i*4}" y="${-(130-i*4)}" rx="6" fill="${i<2?'#f4f1ff':'#ffb3c1'}" stroke="#2a0a22" stroke-width="3"/><circle cx="17" cy="${-(130-i*4)+30}" r="5" fill="#2a0a22"/><circle cx="17" cy="${-(130-i*4)+60}" r="5" fill="#2a0a22"/></g>`).join('')+
+    `<rect y="332" width="800" height="118" fill="#140721"/><path d="M80 90 L200 70 L190 120 L300 90" stroke="#ffd166" stroke-width="5" fill="none" stroke-linejoin="round"/></svg>`; },
+  no_controlas(){ return SVG_OPEN('x12','#1b2a4a','#2f4a7a','#4a6aa0')+
+    [...Array(26)].map((_,i)=>`<path d="M${30+i*31} ${20+(i*37)%160} l-8 22" stroke="#9fc8ff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>`).join('')+
+    `<rect y="360" width="800" height="90" fill="#141f3a"/>
+    <path d="M250 210 Q400 70 550 210Z" fill="#ffd166"/><path d="M400 210 V330" stroke="#cfd6ff" stroke-width="5"/><path d="M250 210 Q280 232 310 210 Q340 232 370 210 Q400 232 430 210 Q460 232 490 210 Q520 232 550 210" fill="#ffd166"/>
+    ${person(400,380,1.1,ME({mood:'neutral',pose:'down'}))}</svg>`; },
+  frenar(){ return SVG_OPEN('x11','#2a1b6e','#c2476b','#ffb36b')+
+    `<path d="M400 450 L400 300 L260 190 M400 300 L540 190" stroke="#fff3c4" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+    <path d="M400 450 L400 300" stroke="#5a3a8a" stroke-width="6" stroke-dasharray="4 18" fill="none" opacity=".6"/>
+    <circle cx="400" cy="110" r="70" fill="#ffe08a" opacity=".9"/>
+    <g transform="translate(330,290)"><rect x="0" y="0" width="140" height="22" rx="8" fill="#e5484d"/><text x="70" y="17" text-anchor="middle" font-size="15" font-weight="900" fill="#fff" letter-spacing="3">ALTO</text></g></svg>`; }
+};
+
+/* =====================================================================
+   HISTORIA — escenas y decisiones
+   ===================================================================== */
+const PROLOGUE = {
+  time:'6:40 a. m.', place:'Tu cuarto', art:{kind:'room'}, kicker:'Viernes', title:'Una mañana cualquiera',
+  get text(){ return [
+    `Viernes, 6:40 a. m. La alarma suena por tercera vez.`,
+    `Te acostaste a las dos de la mañana chateando con ${D()}. El cuaderno de Física sigue cerrado, justo donde lo dejaste el miércoles. Hoy hay examen: tercera hora, profe Ramírez. Y él fue claro: con menos de 3,0 te quedas sin cupo en el paseo del curso.`,
+    `En tu celular hay un mensaje sin responder: <em>«Hoy hablamos de lo de la salida. Ya me prometiste que lo pensabas 🙄»</em>`,
+    `Tienes 16 años, un examen, una relación que se puso seria y la sensación rara de que hoy puede pasar cualquier cosa.`,
+    `<span class="note">Cada decisión tiene un costo y un beneficio, y no siempre se ven de entrada. Algunas pesan más de lo que parece.</span>`
+  ]; }
+};
+
+/* ---------- Decisión 1: la portería ---------- */
+function scene1(){
+  return {
+    n:1, time:'6:55 a. m.', place:'Portería del colegio', art:{kind:'gate'}, kicker:'Decisión 1 de 5', title:'La portería',
+    text:[
+      `Llegas corriendo, con el uniforme a medias y el pelo sin peinar. Todavía tienes en la cabeza lo que hablaste con ${D()} anoche… y ni una sola fórmula de Física.`,
+      `En la portería, Laura te hace una seña desde lejos. Antes de que llegues, Mateo —el de tu curso, el del humor pesado— te cierra el paso con sus amigos.`,
+      `<span class="say">—Uy, miren quién llegó. ¿Toda la noche chateando con su amorcito? Qué intensidad, parce.</span>`,
+      `Hay risas. Alguien levanta el celular para grabar. Es el tercer comentario de Mateo esta semana, y todos esperan a ver qué haces.`
+    ],
+    q:'¿Qué haces?',
+    options:[
+      { id:'a', label:`Seguirle el juego y devolverle un chiste, sin insultarlo`, think:`Si te ríes tú primero, el chiste deja de ser contra ti.`,
+        log:`Le devolviste el chiste a Mateo, sin insultarlo.`, tone:null,
+        apply(s){ s.heat+=1; s.f.humor=true; },
+        cons(s){ return [
+          `<span class="say">—Pues sí, toda la noche. Ojalá el examen me escuchara con tanta atención —dices, y la portería se ríe contigo.</span>`,
+          `Ganaste la ronda sin insultar a nadie: las risas ahora caen sobre el comentario de Mateo, no sobre ti.`,
+          `Pero ves su cara cuando se da cuenta de que el chiste lo dejó a él mal parado. Se ríe, sí, pero con los dientes apretados. <em>Eso no se le va a olvidar.</em>`]; } },
+      { id:'b', label:`Pararlo en seco, en serio y delante de todos: «Ya, Mateo. Basta.»`, think:`Si lo dices claro y a la primera, entiende que hay un límite.`,
+        log:`Le pusiste un límite serio a Mateo delante de todos.`, tone:null,
+        apply(s){ s.f.firme=true; },
+        cons(s){ return [
+          `<span class="say">—Ya, Mateo. Basta. Es el tercer comentario esta semana.</span>`,
+          `Silencio incómodo. Mateo levanta las cejas: <span class="say">—Uy, qué intenso.</span> Pero no repite el chiste, y sus amigos tampoco se ríen.`,
+          `Funciona… por ahora. Eso sí: el que grabó ya tiene tu cara seria en cámara y alguien murmura «qué amargado». Laura, en cambio, te da un pulgar discreto.`]; } },
+      { id:'c', label:`No responder y entrar a clase: aprovechas los diez minutos para repasar Física`, think:`Hoy tienes examen. No tienes tiempo para esto.`, av:true,
+        log:`No respondiste y entraste a repasar Física.`, tone:null,
+        apply(s){ s.heat+=1; s.f.repaso=true; },
+        cons(s){ return [
+          `Pasas junto a Mateo como si fuera una pared. <span class="say">—¡Ni respondió!</span> grita alguien, y se oyen risas atrás.`,
+          `Te sientas con el cuaderno abierto y por fin ves algo: dos temas del examen te quedan más claros. Diez minutos que valen oro.`,
+          `Laura te mira con cara de «¿en serio no vas a decir nada?». Y Mateo no se ve satisfecho: se queda mirando tu espalda como quien se guarda algo para después.`]; } }
+    ]
+  };
+}
+
+/* ---------- Decisión 2: el examen ---------- */
+function scene2(s){
+  const t = [
+    `Tercera hora. El profe Ramírez reparte las hojas boca abajo. <span class="say">—Cinco puntos, cuarenta y cinco minutos. Confío en ustedes.</span> Se sienta a calificar otros trabajos.`,
+    `Das vuelta la hoja. ${s.f.repaso ? 'Reconoces tres ejercicios gracias al repaso de la mañana; los otros dos son un idioma extranjero.' : 'Reconoces dos ejercicios. Los otros tres son un idioma extranjero.'}`,
+    `Y recuerdas lo que dijo el profe: con menos de 3,0 te quedas sin cupo en el paseo del curso.`
+  ];
+  if(s.d[1]==='a') t.push(`Mateo está detrás de ti. De vez en cuando suelta una risita, con la mirada fija en tu nuca.`);
+  if(s.d[1]==='b') t.push(`Mateo está dos puestos atrás y no te mira. Parece que lo de la mañana sí cortó algo… o lo dejó esperando.`);
+  if(s.d[1]==='c') t.push(`Mateo se sentó justo detrás de ti. De vez en cuando suelta una risita, y no sabes si es por ti o por nada.`);
+  t.push(`Laura, a tu lado, va por el ejercicio cuatro con letra segura. Su hoja queda justo en tu ángulo de visión.`);
+  return {
+    n:2, time:'9:40 a. m.', place:'Salón 10°B · Física', art:{kind:'exam'}, kicker:'Decisión 2 de 5', title:'El examen', text:t,
+    q:'El reloj avanza. ¿Qué haces?',
+    options:[
+      { id:'a', label:`Presentarlo con lo que sabes, aunque no alcance`, think:`Si hago mi parte, lo que salga será mío.`,
+        log:`Presentaste el examen con lo que sabías.`, tone:null,
+        apply(s){ s.f.nota = s.f.repaso ? 3.4 : 2.6; },
+        cons(s){ return s.f.repaso ? [
+          `Resuelves lo que sabes y, con el repaso de la mañana, hasta logras plantear el tercer ejercicio. Dejas dos en blanco.`,
+          `Sales con el estómago apretado, pero haciendo cuentas: más o menos un 3,4. Justo para el paseo. Los diez minutos de repaso acaban de pagarse solos.`
+        ] : [
+          `Resuelves los dos que sabes y haces lo que puedes con un tercero. Los demás quedan en blanco.`,
+          `Haces la cuenta con mala cara: un 2,6, tal vez. Y el profe dijo que con menos de 3,0 te quedas sin paseo.`,
+          `No hiciste nada indebido. Y eso, justo ahora, se siente caro.`]; } },
+      { id:'b', label:`Echarle un ojo a la hoja de Laura, solo para confirmar`, think:`Es el paseo del curso lo que está en juego, y ella ni se entera.`, imp:true,
+        log:`Miraste la hoja de Laura durante el examen.`, tone:'dark',
+        apply(s){ s.f.copia=true; s.f.nota=4.2; if(s.heat>=1){ s.f.mateoSabe=true; s.heat+=1; } },
+        cons(s){
+          const r=[
+            `Una mirada, otra, otra más. Tres ejercicios en cinco minutos. Entregas de los primeros y hasta te da tiempo de sonreírle al profe. El paseo queda a salvo.`,
+            `Pero al pasar junto a Laura notas que ella bajó la hoja y la cubrió con el brazo. No dice nada. Sus ojos sí.`];
+          if(s.f.mateoSabe) r.push(`Y detrás de ti oyes una risita baja: Mateo también vio. <span class="say">—Interesante —susurra.</span>`);
+          return r; } },
+      { id:'c', label:`Levantar la mano y pedirle al profe presentarlo otro día`, think:`Prefiero perder un fin de semana que jugármela a ciegas.`,
+        log:`Le pediste al profe presentar el examen otro día.`, tone:null,
+        apply(s){ s.f.pidio=true; s.f.nota=3.5; },
+        cons(s){
+          const r=[
+            `Te sudan las manos. <span class="say">—Profe, anoche no estudié. ¿Puedo presentarlo otro día?</span>`,
+            `Ramírez te mira un rato largo. <span class="say">—Se puede. El lunes a primera hora, con otro examen. Pero la nota máxima será 3,5 y esto queda anotado en el observador.</span>`,
+            `El paseo sigue en pie, pero tu fin de semana acaba de llenarse de Física y tu observador, de una anotación.`];
+          if(s.heat>=1) r.splice(2,0,`Detrás de ti, Mateo hace un ruidito de burla.`);
+          return r; } }
+    ]
+  };
+}
+
+/* ---------- Decisión 3: el patio (relación) ---------- */
+function scene3(s){
+  const N = D();
+  const t = [
+    `Hora del almuerzo. El patio huele a empanadas y a fin de semana. ${N} te espera en la banca de siempre, con cara de tener el discurso listo.`,
+    `<span class="say">—Mis papás no llegan hasta las ocho. Vámonos a mi casa saliendo del colegio. Ya llevamos ocho meses, ¿o es que no confías en mí?</span>`
+  ];
+  if(s.d[1]==='a') t.push(`Antes de que contestes, agrega: <span class="say">—Me contaron lo de esta mañana. Dicen que dejaste mal a Mateo delante de todos.</span>`);
+  if(s.d[1]==='b') t.push(`Antes de que contestes, agrega: <span class="say">—Me contaron que le pusiste un límite a Mateo. Eso me gustó.</span>`);
+  if(s.d[2]==='b') t.push(`Todavía tienes el nudo del examen en la garganta, y piensas con la cabeza revuelta.`);
+  if(s.d[2]==='a') t.push(s.f.repaso ? `El examen te salió regular, pero salvaste el paseo. Respiras un poco más tranquilo.` : `Con el 2,6 en la cabeza ya te ves sin paseo. No estás de humor para nada.`);
+  if(s.d[2]==='c') t.push(`Tu fin de semana ya tiene dueño: Física. ${N} lo sabe. <span class="say">—O sea que hoy es el único día, ¿no?</span>`);
+  t.push(`Lo que más pesa es que parece que «todos» ya lo vivieron, aunque nadie lo diga claro. En Ética hablaron de límites y de consentimiento, y te dio pena preguntar.`);
+  t.push(`Quieres a ${N}. Eso es lo único que tienes claro.`);
+  return {
+    n:3, time:'12:15 p. m.', place:'Patio del colegio', art:{kind:'patio'}, kicker:'Decisión 3 de 5', title:'La banca de siempre', text:t,
+    q:`${N} espera tu respuesta.`,
+    options:[
+      { id:'a', label:`Decirle que sí: llevan ocho meses y no quieres que lo de ustedes se enfríe`, think:`Quieres a ${N}. Ya verán cómo cuidarse sobre la marcha.`, imp:true,
+        log:`Le dijiste que sí a ${N} para no enfriar la relación.`, tone:'dark',
+        apply(s){ s.f.cede=true; },
+        cons(s){ return [
+          `<span class="say">—Bueno, vamos —dices.</span> ${N} sonríe y te abraza. Todo parece bien, y por un rato se siente muy bien.`,
+          `Pero algo queda torcido: nadie habló de cuidarse, ni de lo que quería cada uno, ni de qué pasaba después. No te atreves a preguntar porque no quieres romper el momento.`,
+          `El resto del día la cabeza no te para: «¿y si…?». Todo lo demás se vuelve ruido de fondo.`]; } },
+      { id:'b', label:`Decirle que sí, pero con una condición: antes hablan de cuidarse y de qué quiere cada uno`, think:`Si va a pasar, que sea bien pensado.`,
+        log:`Le pusiste una condición a ${N}: hablar antes de cuidarse y de qué querían.`, tone:null,
+        apply(s){ s.f.cond=true; },
+        cons(s){ return [
+          `<span class="say">—Sí, pero antes quiero que hablemos de cuidarnos y de qué quiere cada uno.</span>`,
+          `${N} te mira. <span class="say">—¿Condiciones? ¿Tan poco confías en mí?</span> Se le nota la molestia… hasta que suspira. <span class="say">—Bueno. Hablemos.</span>`,
+          `Se les va el almuerzo entero. Resulta que ambos estaban nerviosos y ninguno se había atrevido a decirlo. Terminan decidiendo esperar.`,
+          `No se siente mal, pero a ${N} le queda el orgullo un poco herido, y a ti, una duda: ¿habrías dicho lo mismo si ${G.chico?'ella':'él'} no te hubiera apretado?`]; } },
+      { id:'c', label:`Decirle que no, por ahora`, think:`No es el momento para ti, aunque se enoje.`,
+        log:`Le dijiste a ${N} que no, por ahora.`, tone:'dark',
+        apply(s){ s.f.daniNo=true; },
+        cons(s){ return [
+          `Respiras hondo. <span class="say">—${N}, todavía no estoy ahí. No tiene que ver con quererte ni con confiar en ti. Es que no es el momento para mí.</span>`,
+          `${N} se queda callad${dA()} un rato. <span class="say">—Ok —dice, con una voz que no suena a ok—. Después hablamos.</span> Y se va con su grupo.`,
+          `Se te aprieta el pecho. Dijiste lo que sentías… pero no se siente como una victoria.`]; } }
+    ]
+  };
+}
+
+/* ---------- Decisión 4: redes (3 variantes según lo ocurrido) ---------- */
+function variant4(s){ return s.d[1]==='a' ? 'video' : (s.d[3]==='b' ? 'captura' : 'rumor'); }
+function scene4(s){
+  const v = variant4(s), N = D();
+  if(v==='video'){
+    const t=[
+      `Última hora. Sociales. La profe explica algo que no escuchas: tu celular vibra sin parar debajo del pupitre.`,
+      `El grupo «10°B 🔥» explotó. Alguien subió el video de la mañana: tu chiste, un zoom a la cara de Mateo y risas enlatadas. El título: <em>«Mateo recibió su merecido 😂»</em>. Más de cien reacciones.`,
+      `Mateo escribió: <span class="say">«Muy gracioso. Ya veremos quién se ríe al final».</span>`
+    ];
+    if(s.f.mateoSabe) t.push(`Y alguien comentó: <span class="say">«y el que mira la hoja del lado en Física también 👀».</span> Ahí sí se te cae el estómago.`);
+    t.push(`Todo el mundo está sumando memes sobre Mateo. Es muy fácil seguir la corriente.`);
+    return { n:4, time:'3:30 p. m.', place:'Clase de Sociales · El chat del curso', art:{kind:'phone',title:'10°B 🔥',badge:'99+'}, kicker:'Decisión 4 de 5', title:'El video', text:t, q:'El chat sigue sumando mensajes.',
+      options:[
+        { id:'a', label:`Sumarte a la corriente con un meme sobre Mateo: él empezó, ¿no?`, think:`Si no lo haces tú, igual lo van a hacer los demás.`, imp:true,
+          log:`Subiste un meme sobre Mateo al chat.`, tone:'hot',
+          apply(s){ s.heat+=2; s.f.expuso=true; },
+          cons(s){ return [
+            `Subes el meme. En cinco minutos tiene ochenta reacciones y todos te celebran. Por unas horas eres el gracioso.`,
+            `Mateo responde con algo peor, y el grupo se vuelve una pelea de a cinco. Laura te escribe en privado: <span class="say">«borra eso, de verdad».</span>`,
+            `La profe de Sociales levanta la vista porque alguien le cuenta lo que pasa. Esto ya no es solo un chat.`]; } },
+        { id:'b', label:`Escribirle a Mateo en privado para que los dos borren lo suyo`, think:`Si no lo paro yo, nadie lo va a parar.`,
+          log:`Le escribiste a Mateo en privado para que los dos borraran todo.`, tone:null,
+          apply(s){ if(s.heat>=2){ s.f.r4='fail'; s.fails++; s.heat+=1; } else { s.f.r4='ok'; s.heat=Math.max(0,s.heat-1); s.f.mediado=true; } },
+          cons(s){
+            const r=[`Le escribes a Mateo: <span class="say">«Esto se salió de control. ¿Borramos los dos?»</span>`];
+            if(s.f.r4==='fail') r.push(`Responde a los treinta segundos: <span class="say">«Qué fácil ahora. ¿Y lo de Física? 👀»</span>`,`Captura tu mensaje y lo sube al grupo: «Miren al valiente pidiendo paz». Quisiste bajar la tensión y te salió el tiro por la culata.`);
+            else r.push(`Pasan veinte minutos de silencio que se sienten larguísimos. Luego: <span class="say">«ya, bueno. yo lo borro si tú lo borras».</span>`,`Alguien escribe «qué blandos». Pero los videos desaparecen, y Mateo y tú empiezan a hablar como dos personas y no como dos personajes.`);
+            return r; } },
+        { id:'c', label:`Pedirle a la profe de Sociales que intervenga y haga borrar el video`, think:`Hay un adulto a tres metros. Para eso están.`,
+          log:`Le pediste a la profe de Sociales que hiciera borrar el video.`, tone:null,
+          apply(s){ s.heat+=1; s.f.sapo=true; },
+          cons(s){ return [
+            `Levantas la mano y le muestras el celular a la profe. Ella toma el control: pide que borren el video y anota nombres.`,
+            `En diez minutos el video desaparece. Mateo recibe un llamado de atención y te mira desde su puesto como quien guarda un nombre.`,
+            `Alguien murmura «sapo». El incendio se apagó, pero Mateo ahora tiene un motivo que antes no tenía.`]; } }
+      ] };
+  }
+  if(v==='rumor'){
+    const t=[`Última hora. Sociales. Tu celular vibra y vibra.`,`En el grupo del curso, Valeria —amiga de ${N}— escribió algo y ya lo comentan todos.`];
+    if(s.d[3]==='a') t.push(`<span class="say">«${N} y alguien más tienen plan en casa esta tarde 😏🔥».</span> En diez minutos son veinte comentarios y un meme.`, `Lo cierto es que el plan sí existe. Pero no era para que lo supiera todo el curso.`);
+    else t.push(`<span class="say">«Parece que hubo drama en el patio: dicen que ${N} le rogó a alguien y nada 😬».</span> En diez minutos son veinte comentarios y un meme.`, `No es como pasó. Pero ya va de boca en boca. ${N} no ha escrito nada.`);
+    return { n:4, time:'3:30 p. m.', place:'Clase de Sociales · El chat del curso', art:{kind:'phone',title:'10°B 🔥',badge:'24'}, kicker:'Decisión 4 de 5', title:'El rumor', text:t, q:`El chisme crece y habla de ti y de ${N}.`,
+      options:[
+        { id:'a', label:`Escribir en el grupo, corto y claro: «Eso no es así. Paren.»`, think:`Si lo cortas rápido, no crece.`,
+          log:`Escribiste en el grupo que el chisme no era así y que pararan.`, tone:null,
+          apply(s){ if(s.d[3]==='a'){ s.f.mintio=true; s.fails++; s.f.r4='lie'; } else { s.f.r4='ok'; if(s.heat>=1) s.heat+=1; } },
+          cons(s){
+            if(s.f.r4==='lie') return [
+              `Escribes: <span class="say">«Eso no es así. Paren.»</span>`,
+              `El chat se calma. Pero ${D()} lo ve, y te escribe en privado: <span class="say">«¿Ahora resulta que no es así?»</span>`,
+              `Apagaste el chisme con una mentira. Y la mentira abrió una grieta mucho más difícil de tapar.`];
+            const r=[`Escribes: <span class="say">«Eso no es como lo cuentan. Paren.»</span>`,`Funciona a medias: la mitad del chat se calla. Alguien escribe «uy, qué susceptible 🍿», pero nadie le sigue el juego.`,`${D()} te escribe luego: <span class="say">«Gracias por cortarlo. Perdón por haberme desahogado con Valeria».</span>`];
+            return r; } },
+        { id:'b', label:`Escribirle primero a ${N} para preguntarle qué pasó`, think:`Antes de reaccionar quiero saber de dónde salió.`,
+          log:`Le preguntaste primero a ${N} qué había pasado.`, tone:null,
+          apply(s){ s.f.r4='ask'; },
+          cons(s){ return [
+            `Le escribes a ${N}: <span class="say">«¿Qué pasó? ¿Hablaste con Valeria? Quiero entender antes de decir nada».</span>`,
+            s.d[3]==='c' ? `Tarda en responder, y cuando lo hace: <span class="say">«Me desahogué con ella, no pensé que lo iba a contar. ¿Y ahora me interrogas?»</span> Tiene algo de razón, y tú también.`
+                         : `Responde: <span class="say">«Solo le conté que ibas a venir, perdón. No pensé que lo iba a subir».</span>`,
+            `El chisme sigue circulando un par de horas más, pero ya sabes de dónde salió, y eso cuenta.`]; } },
+        { id:'c', label:`No hacer nada: es un chisme y se les va a pasar`, think:`Responder es echarle leña al fuego.`, av:true,
+          log:`No hiciste nada: dejaste que el chisme pasara.`, tone:'dark',
+          apply(s){ s.f.r4='quiet'; },
+          cons(s){ return [
+            `No contestas. El chisme da dos vueltas y se enfría… para los que no preguntan. Para los demás queda como verdad a medias.`,
+            s.d[3]==='c' ? `${D()} ve que no dijiste nada y escribe: <span class="say">«Mínimo habrías dicho algo».</span>` : `${D()} no dice nada, pero tampoco escribe más esa tarde.`]; } }
+      ] };
+  }
+  const t=[
+    `Última hora. Sociales. Tu celular vibra.`,
+    `En el grupo del curso circula una captura: un mensaje privado de Juli —la que se sienta al fondo— confesándole a una amiga que le gusta alguien del salón. Alguien se la filtró. Ya hay memes y stickers.`,
+    `Un compañero te escribe en privado: <span class="say">«Reenvíale la captura a Mateo jaja, se va a morir».</span>`
+  ];
+  if(s.f.mateoSabe) t.push(`Mateo ya la compartió con sus amigos. Tú sabes que sabe lo de la hoja, y piensas en lo fácil que sería reírte con los demás para que no te la cobre.`);
+  return { n:4, time:'3:30 p. m.', place:'Clase de Sociales · El chat del curso', art:{kind:'phone',title:'10°B 🔥',badge:'57'}, kicker:'Decisión 4 de 5', title:'La captura', text:t, q:'Todos la están compartiendo.',
+    options:[
+      { id:'a', label:`Reenviarla a un par de amigos: «total, ya la vio todo el mundo»`, think:`Una más no hace diferencia.`, imp:true,
+        log:`Reenviaste la captura privada de Juli.`, tone:'hot',
+        apply(s){ s.heat+=1; s.f.expuso=true; },
+        cons(s){ return [
+          `La reenvías a tres personas. Risas, emojis. Se siente normal, como hace todo el mundo.`,
+          `Dos minutos después ves que Juli está en línea. Escribe, borra, escribe, borra. Se desconecta.`,
+          `Una de las personas a las que se la mandaste la subió al grupo grande. Tu nombre aparece como «quien la pasó».`]; } },
+      { id:'b', label:`Escribirle a Juli en privado para que sepa, sin meterte en el grupo`, think:`No quiero convertir esto en una pelea pública.`,
+        log:`Le avisaste a Juli en privado.`, tone:null,
+        apply(s){ s.f.r4='priv'; },
+        cons(s){ return [
+          `Le escribes a Juli: <span class="say">«Oye, circula una captura tuya. Lo siento mucho, yo no la reenvié».</span>`,
+          `Tarda en responder: <span class="say">«Gracias por decirme. Ahora sé por qué todos me miran raro 🥲».</span> La captura sigue circulando hasta la noche.`,
+          `No frenaste el chisme, y lo sabes. Pero hiciste algo real por una persona, y no por el chat.`]; } },
+      { id:'c', label:`Pedir en el grupo que la borren y que dejen a Juli en paz`, think:`Si callo, soy parte de esto.`,
+        log:`Pediste en el grupo que borraran la captura de Juli.`, tone:null,
+        apply(s){ if(s.heat>=1){ s.f.r4='fail'; s.fails++; s.heat+=1; } else { s.f.r4='ok'; } },
+        cons(s){
+          if(s.f.r4==='fail') return [
+            `Escribes en el grupo: <span class="say">«Ya, borren esa captura. No es chévere con Juli».</span>`,
+            `Mateo contesta enseguida: <span class="say">«ya salió el policía 😒».</span> Varios se suman, y ahora hablan de la captura, de ti y otra vez de Juli.`,
+            `Querías protegerla y le pusiste más luces encima. Ella te escribe: <span class="say">«Mejor no te metieras…»</span>`];
+          return [
+            `Escribes en el grupo: <span class="say">«Ya, parce, borren eso. No es chévere con Juli».</span>`,
+            `Hay emojis de burla, pero tres personas la borran, luego cinco, y el chisme se aburre. Juli te escribe: <span class="say">«Gracias. En serio».</span>`]; } }
+    ] };
+}
+
+/* ---------- Decisión 5: la salida (2 variantes) ---------- */
+function variant5(s){ return s.heat>=2 ? 'hot' : 'fall'; }
+function scene5(s){
+  if(variant5(s)==='hot'){
+    const t=[
+      `El timbre de salida suena como una alarma. Sales con la mochila a medio cerrar y la cabeza llena de ruido.`,
+      `En la esquina, junto a la tienda, Mateo y tres amigos te están esperando. Se va formando un círculo de uniformes con los celulares ya en alto.`,
+      `<span class="say">—¿Qué, bien valiente ahora? —dice Mateo, y te empuja el hombro.</span>`
+    ];
+    if(s.f.sapo) t.push(`Desde que la profe lo llamó la atención, Mateo te mira distinto. Sus amigos también.`);
+    if(s.f.expuso && variant4(s)==='video') t.push(`El meme que subiste sigue dando vueltas, y se nota en cómo te miran.`);
+    if(s.f.mateoSabe) t.push(`Se acerca y te dice, solo para ti: <span class="say">—¿Y si le cuento al profe lo del examen?</span>`);
+    if(s.f.cede) t.push(`Llevas toda la tarde con la cabeza en otra cosa. Estás a un milímetro de explotar.`);
+    t.push(`Alguien grita «¡peleen!». Te late el corazón en los oídos. Todo se ve muy nítido y muy lento.`);
+    return { n:5, time:'5:40 p. m.', place:'Esquina del colegio', art:{kind:'gateEve'}, kicker:'Decisión 5 de 5', title:'La esquina', text:t, q:'Tienes unos segundos. ¿Qué haces?',
+      options:[
+        { id:'a', label:`Empujarlo de vuelta: no te vas a dejar`, think:`Si te quedas quieto, quedas como un cobarde ante todos.`, imp:true,
+          log:`Empujaste a Mateo de vuelta en la esquina del colegio.`, tone:'hot', apply(s){},
+          cons(s){ return [
+            `Lo empujas. Él te empuja más fuerte. Alguien te agarra de atrás, alguien grita, y el primer golpe ni sabes quién lo dio.`,
+            `Termina rápido. La vigilante llega corriendo, el círculo se abre, y los celulares ya tienen todo grabado.`,
+            `En la portería te anuncian: citación a acudientes el lunes. Ya no hay vuelta atrás; ahora toca ver qué viene.`]; } },
+        { id:'b', label:`Hablarle de frente, sin gritar: «Dime qué quieres, pero sin público»`, think:`Si lo trato como persona, quizá él también.`,
+          log:`Le hablaste de frente a Mateo, sin gritar.`, tone:null,
+          apply(s){ if(s.heat>=3){ s.f.r5='fail'; s.fails++; } else { s.f.r5='ok'; } },
+          cons(s){
+            if(s.f.r5==='fail') return [
+              `<span class="say">—Mateo, dime qué quieres. Pero sin tanta gente mirando.</span>`,
+              `<span class="say">—¿Qué quiero, eh?</span> Y te empuja otra vez, más fuerte. El círculo se ríe. No hay nada que puedas decir que se oiga por encima del ruido.`,
+              `Terminas retrocediendo, con los celulares apuntándote. No pegaste ni gritaste, y aun así sales peor parado. Un amigo de Mateo te grita «gallina» hasta la esquina.`];
+            return [
+              `<span class="say">—Mateo, dime qué quieres. Pero sin tanta gente mirando.</span>`,
+              `Un segundo eterno. Alguien dice «uy, se rajó», pero Mateo duda: no esperaba que le hablaran así. Un amigo lo agarra del brazo: <span class="say">—Déjelo, parce.</span>`,
+              `No sabes si funcionó o si solo compraste tiempo. Pero no hubo golpes.`]; } },
+        { id:'c', label:`Darte la vuelta y buscar a la vigilante de la portería`, think:`No es tu pelea, y hay una adulta a veinte pasos.`,
+          log:`Te fuiste a buscar a la vigilante de la portería.`, tone:null,
+          apply(s){ s.f.vigilante=true; },
+          cons(s){ return [
+            `Caminas hacia la portería sin mirar atrás. <span class="say">—¡Se va a esconder!</span> gritan. Te pesa cada paso.`,
+            `La vigilante, doña Marta, sale con voz de mando y el círculo se desarma como por arte de magia.`,
+            `Eso sí: el apodo de «sapo» queda flotando unos días, y Mateo no se queda tranquilo. <span class="say">—Esto sigue el lunes —te dice al pasar.</span>`]; } }
+      ] };
+  }
+  const t=[
+    `Suena el timbre de salida. Bajas las escaleras revisando mensajes.`,
+    `De pronto alguien sale corriendo del baño, te choca de lleno y tu celular vuela por el aire. El golpe contra el piso suena a vidrio roto, porque lo es.`,
+    `Es Tomás, uno de noveno, pálido como una hoja. <span class="say">—Perdón, perdón, fue sin querer…</span> Alrededor se arma un grupito: <span class="say">«¡Que te lo pague!»</span>`
+  ];
+  if(s.f.cede) t.push(`Hoy ya vas cargando mucho. Sientes que si algo más se rompe, vas a gritar.`);
+  t.push(`La pantalla quedó hecha una telaraña. Tu mamá lo compró a cuotas, todavía lo están pagando.`);
+  return { n:5, time:'5:40 p. m.', place:'Escaleras de salida', art:{kind:'fall'}, kicker:'Decisión 5 de 5', title:'El choque', text:t, q:'Todos te miran. ¿Qué haces?',
+    options:[
+      { id:'a', label:`Detenerlo del brazo para que no se escape y exigirle que responda ya`, think:`Esa pantalla cuesta caro y alguien tiene que responder.`, imp:true,
+        log:`Detuviste a Tomás del brazo y le exigiste que respondiera.`, tone:'hot', apply(s){},
+        cons(s){ return [
+          `Lo agarras del brazo antes de que se pierda en la fila. <span class="say">—¡No te vas hasta que me respondas por esto!</span>`,
+          `Tomás se pone pálido y empieza a llorar. Alguien ya está grabando. Una profesora te ve sosteniéndolo y te hace soltarlo con voz seca.`,
+          `Ya no importa que el celular sea tuyo: ahora eres «el que agarró al de noveno». Coordinación te cita el lunes.`]; } },
+      { id:'b', label:`Decirle que no pasa nada y dejarlo ir`, think:`Es un pelado de noveno y casi se desmaya del susto.`, av:true,
+        log:`Le dijiste a Tomás que no pasaba nada y lo dejaste ir.`, tone:'dark', apply(s){ s.f.dejoIr=true; },
+        cons(s){ return [
+          `<span class="say">—Tranquilo, fue sin querer. Vete.</span>`,
+          `Tomás casi te abraza del alivio y sale corriendo. El grupito suelta un «qué bobo». Alguien dice «no seas fácil».`,
+          `En casa tu mamá ve la pantalla: <span class="say">—¿Y quién va a pagar eso?</span> Tú, esta vez, con lo que tienes ahorrado. Y el enojo que no sacaste en el colegio sale ahí.`]; } },
+      { id:'c', label:`Pedirle los datos con calma y avisar a coordinación para acordar cómo reponerlo`, think:`Que se arregle bien y por escrito.`,
+        log:`Pediste los datos de Tomás y avisaste a coordinación.`, tone:null, apply(s){ s.f.coord=true; },
+        cons(s){ return [
+          `Levantas la mano hacia la coordinadora que está en el pasillo. <span class="say">—¿Puede ayudarnos? Hubo un accidente.</span>`,
+          `Ella organiza todo: anota el nombre de Tomás, llaman a sus papás y quedan en reunirse el martes.`,
+          `Es lo justo, pero lento: los papás de Tomás dicen que «eso se cae solo» y discuten el valor; el trámite toma semanas. Algunos murmuran que exageraste.`]; } }
+    ] };
+}
+
+const SCENES = [scene1, scene2, scene3, scene4, scene5];
+
+/* =====================================================================
+   FINALES
+   ===================================================================== */
+const ENDINGS = {
+  cabeza_fria:{ title:'Cabeza fría', tag:'Resolver sin explotar', art:'cabeza_fria', color:'#4df0cf',
+    text:()=>[
+      `Cuando el viernes por fin termina, te das cuenta de algo curioso: no es que todo haya salido perfecto —hubo momentos incómodos, silencios raros y alguna mirada de lado—, sino que ninguna de las cosas que pasaron te dejó con ganas de borrar el día.`,
+      `Nada de lo que hiciste fue épico. Fue respirar un segundo antes de responder, decir lo que pensabas sin gritarlo y aceptar que no controlas lo que hacen los demás… pero sí lo que haces tú.`,
+      `Mañana habrá nuevos conflictos. La diferencia es que ahora sabes que casi siempre tienes unos segundos antes de decidir.`] },
+  nota_baja:{ title:'Nota baja, cabeza en alto', tag:'Un 2,6 limpio vale más que un 4,2 prestado', art:'nota_baja', color:'#7c9cff',
+    text:()=>[
+      `El 2,6 en la hoja de Física duele, y trae un costo concreto: el paseo del curso se va sin ti. No hay forma de maquillarlo. Pero cuando lo miras no tienes nada que esconder: lo presentaste como estabas.`,
+      `Lo curioso es que esa misma lógica se te pegó al resto del día: dijiste lo que pensabas sin disfrazarlo y asumiste lo que vino. No todo salió bien, pero todo salió limpio.`,
+      `El lunes tienes recuperación y un montón de cosas por mejorar. Empiezas desde el piso firme de lo que hiciste, no desde el piso falso de lo que aparentaste.`] },
+  no_costo:{ title:'Un no que costó', tag:'Decidir por ti, aunque duela', art:'no_costo', color:'#ff8fb1',
+    text:()=>[
+      `Decirle que no a ${D()} fue lo más difícil del día, y tal vez de la semana. No porque dudaras, sino porque sabías que iba a doler.`,
+      `Hubo silencio, mensajes sin responder y una banca vacía en el almuerzo. Pero también apareció algo nuevo: la certeza de que lo que haces con tu cuerpo y con tu tiempo lo decides tú, aunque alguien a quien quieres no esté de acuerdo.`,
+      `No sabes cómo va a terminar tu historia con ${D()}. Sabes cómo vas a terminar tú: sin traicionarte.`] },
+  silencios:{ title:'Silencios que pesan', tag:'Evitaste las peleas, no los problemas', art:'silencios', color:'#9aa6e0',
+    text:()=>[
+      `Por fuera, el día pasó sin explosiones: nada de gritos, nada de peleas, nadie citado a coordinación. Por dentro, la historia es otra.`,
+      `Cada vez que te callaste evitaste un problema inmediato… y dejaste cosas sin decir. Mateo sigue siendo un asunto sin resolver. El chat sigue contando una historia donde tú no dijiste nada.`,
+      `Callarte no fue malo. Callarte todas las veces dejó una pila de cosas pendientes que el fin de semana no va a resolver solo.`] },
+  cinco:{ title:'Cinco segundos', tag:'Todo el día, resumido en un impulso', art:'cinco', color:'#ff6a3d',
+    text:(s)=>[
+      `Todo el día venía siendo manejable. Y entonces fueron cinco segundos: una mano, un grito, un empujón.`,
+      `Lo que hiciste durante el día quedó tapado por lo que hiciste al final. El lunes no vas a ser «el que casi lo logró», sino ${variant5(s)==='hot'?'«el de la pelea en la esquina»':'«el de la camisa de Tomás»'}.`,
+      `Cinco segundos fue lo que tardaste en actuar, y lo que va a tardar en olvidarse es bastante más. Pero lo que viene —la citación, la charla en casa, las disculpas— también es una oportunidad: demostrar que un mal momento no te define.`] },
+  mensaje:{ title:'El mensaje que no se borra', tag:'Diez segundos para enviarlo, años para borrarlo', art:'mensaje', color:'#4df0cf',
+    text:()=>[
+      `Lo que escribiste o compartiste en el chat tardó diez segundos en enviarse y va a tardar mucho en desaparecer. Alguien tiene una captura. Siempre hay alguien con una captura.`,
+      `Desde entonces, cada vez que ves tu nombre en ese grupo, algo se te encoge. Lo que dijiste ya no es tuyo: es de todos.`,
+      `No todo está perdido: puedes pedir disculpas, borrar lo que se pueda y recordar que en internet las cosas no se deshacen como en la vida real. Y que la vida real tampoco se deshace como en internet.`] },
+  no_hablaron:{ title:'Lo que no hablaron', tag:'Decir «sí» para evitar un problema solo lo cambia de lugar', art:'no_hablaron', color:'#ff8fb1',
+    text:()=>[
+      `Lo que pasó entre ${D()} y tú no fue culpa de nadie en particular: fue la consecuencia de no haber hablado antes. De qué querían los dos, de qué pasaba después, de cómo cuidarse.`,
+      `Esa noche entendiste que decir «sí» para evitar un problema no evita el problema: solo lo traslada. El miedo, las preguntas sin respuesta y la sensación de no haber elegido del todo se quedaron contigo.`,
+      `Hay cosas que se pueden empezar a arreglar: hablar con ${D()} sin presiones, buscar información confiable y, si hace falta, consultar a un profesional de salud o a un adulto de confianza. Todavía estás a tiempo de decidir lo que sigue.`] },
+  lograste:{ title:'Lo lograste, pero…', tag:'La nota subió; algo más bajó', art:'lograste', color:'#ffd166',
+    text:()=>[
+      `El 4,2 en Física se ve muy bien en el boletín. Y nadie te va a quitar la nota.`,
+      `Lo que no sale en el boletín es otra cosa: la mirada de Laura, un poco más seca; el ruidito en la cabeza cada vez que el profe dice «confío en ustedes»; la idea de que cada nota que saques de ahora en adelante podrías tener que explicarla.`,
+      `Conseguiste lo que querías. El costo no estaba en el precio, sino en la letra pequeña. Y la letra pequeña también se corrige: con una conversación honesta con Laura y contigo.`] },
+  broma:{ title:'La broma que volvió', tag:'Un chiste de diez segundos, un día entero de consecuencias', art:'broma', color:'#ffb36b',
+    text:()=>[
+      `Todo empezó con un chiste de diez segundos en la portería. Un chiste que se sintió ingenioso, justo, hasta inocente: nadie salió insultado.`,
+      `Pero un chiste que deja mal parado a alguien delante de todos no se queda en la portería. Dio la vuelta por el chat y por la salida del colegio. Para Mateo no fue un chiste: fue una cuenta pendiente.`,
+      `Lo que parecía pequeño terminó tocando tu tranquilidad y tu forma de caminar por el colegio. Aun así, tuviste momentos para bajar la tensión, y los vas a tener otra vez.`] },
+  domino:{ title:'Efecto dominó', tag:'Una cosa llevó a la otra, y a la otra…', art:'domino', color:'#ff4d6d',
+    text:()=>[
+      `Una cosa llevó a la otra. Y a la otra. Y a la otra.`,
+      `Una respuesta en caliente, una nota dudosa, un mensaje enviado sin pensar y una pelea: todo se fue sumando hasta que dejó de estar claro cuál fue la primera ficha. El lunes habrá citación, conversación incómoda en casa, un profe preocupado y varios chats que preferirías no abrir.`,
+      `No es el fin del mundo. Pero sí es el momento de sentarte a mirar la cadena completa y preguntarte: ¿cuál fue el primer eslabón que sí pude haber cambiado?`] },
+  no_controlas:{ title:'Lo que no controlabas', tag:'Pensaste antes de actuar, y aun así algo salió mal', art:'no_controlas', color:'#7cc4ff',
+    text:()=>[
+      `Hiciste lo que parecía razonable: pensaste, esperaste, escogiste con cuidado. Y aun así algo no salió como esperabas: una respuesta que no llegó, un chisme que creció, alguien que decidió leer tus palabras de la peor manera.`,
+      `Esa es una parte difícil de crecer: puedes actuar con la mejor intención y que el resultado dependa también de lo que hacen los demás. No significa que decidiste mal. Significa que no controlas todo.`,
+      `Lo que sí controlas es lo que haces después: no devolver el golpe, ajustar el plan, pedir ayuda, volver a intentar. Eso fue lo que te quedó al final del día, y no es poco.`] },
+  frenar:{ title:'Frenar a tiempo', tag:'Cuando todo iba mal, hiciste algo distinto', art:'frenar', color:'#ffb36b',
+    text:()=>[
+      `Durante buena parte del día fuiste en piloto automático: respondiste rápido, actuaste en caliente, te dejaste llevar. Se acumularon consecuencias: un chat caliente, una nota dudosa, una relación tensa.`,
+      `Pero al final, cuando todo estaba a punto de explotar, hiciste algo distinto: frenaste. Respiraste, pediste ayuda o simplemente no devolviste el golpe.`,
+      `Eso no borra lo anterior. Hay cosas por arreglar y alguna conversación difícil te espera. Pero demostraste algo importante: incluso cuando vas mal, siempre hay un momento para cambiar el rumbo.`] }
+};
+const END_ORDER = ['cabeza_fria','nota_baja','no_costo','silencios','no_controlas','cinco','mensaje','no_hablaron','lograste','broma','domino','frenar'];
+
+function pickEnding(s){
+  const d=s.d, f=s.f, bad=s.imp+s.fails, pelea=d[5]==='a';
+  if(bad>=3) return pelea ? 'domino' : 'frenar';
+  if(pelea) return 'cinco';
+  if(f.expuso||f.mintio) return 'mensaje';
+  if(f.cede) return 'no_hablaron';
+  if(f.copia) return 'lograste';
+  if(s.fails>=1) return 'no_controlas';
+  if(d[1]==='a' && variant5(s)==='hot') return 'broma';
+  if(s.av>=2) return 'silencios';
+  if(d[3]==='c') return 'no_costo';
+  if(d[2]==='a' && !f.repaso) return 'nota_baja';
+  return 'cabeza_fria';
+}
+
+/* Resumen por ámbitos: depende de las decisiones y de sus ecos */
+function summaryCards(s){
+  const d=s.d, f=s.f, v4=variant4(s), v5=variant5(s), N=D(), a=dA();
+  /* Académico */
+  let ac;
+  if(d[2]==='a') ac = f.repaso
+    ? `Presentaste el examen con lo que sabías y, gracias al repaso de la mañana, sacaste 3,4: lo justo para conservar el paseo del curso. Diez minutos que decidieron mucho.`
+    : `Presentaste el examen con lo que sabías y sacaste 2,6. Fue honesto, pero con menos de 3,0 el paseo del curso se va sin ti. Cumpliste con tu conciencia y pagaste el precio.`;
+  else if(d[2]==='b') ac = f.mateoSabe
+    ? `Sacaste 4,2 gracias a la hoja de Laura y el paseo quedó a salvo. Mateo lo sabía y lo usó: el lunes el profe te pidió explicar dos ejercicios en el tablero, y todavía estás pensando qué decir.`
+    : `Sacaste 4,2 con ayuda de la hoja de Laura y el paseo quedó a salvo. Nadie lo dijo en voz alta, pero Laura lo sabe y ya no te pasa los apuntes como antes. La nota quedó… prestada.`;
+  else ac=`Pediste otra oportunidad. Pasaste el fin de semana estudiando y el lunes sacaste 3,5 (el tope). El paseo sigue en pie, pero quedó una anotación en el observador y en casa preguntaron por ella.`;
+  /* Pareja */
+  let pa;
+  if(d[3]==='a'){
+    if(f.mintio) pa=`Dijiste que sí sin hablar antes de cuidarse ni de qué querían los dos, y cuando llegó el chisme negaste algo que era cierto. ${N} se sintió desautorizad${a} y la confianza quedó herida. Las dudas de esa tarde siguen sin resolverse.`;
+    else if(d[5]!=='a') pa=`Dijiste que sí sin hablar antes de cuidarse ni de qué querían los dos. Días después reuniste valor para buscar información confiable y hablar con un adulto o con un servicio de salud para jóvenes. Con ${N}, ahora lo hablan de frente.`;
+    else pa=`Dijiste que sí sin hablar antes de cuidarse ni de qué querían los dos. Con ${N} nunca volvieron a hablar de eso con calma: quedaron las dudas y la sensación de haber decidido sin elegir.`;
+  } else if(d[3]==='b'){
+    pa=`Hablaron antes de decidir, y decidieron esperar. A ${N} le dolió al principio que pusieras «condiciones», pero con los días entendió que los dos estaban igual de nerviosos. Siguen juntos, con una confianza distinta: más lenta, pero más real.`;
+  } else {
+    pa = (d[5]==='a'||f.expuso)
+      ? `Después de tu «no» y de todo lo que pasó, ${N} se alejó y terminaron. Duele, aunque no te arrepientes de haber sido claro.`
+      : `${N} estuvo distante un par de días. El lunes, en el descanso, te dijo: «Me dolió, pero prefiero que me digas la verdad.» Siguen juntos, con más claridad.`;
+  }
+  /* Compañeros */
+  const m=[];
+  if(d[1]==='a'){
+    if(v5==='hot') m.push(`Tu chiste de la mañana dejó mal parado a Mateo, aunque fuera con humor, y él esperó su turno.`);
+    else if(f.mediado) m.push(`Con Mateo se escribieron y borraron lo del video. No son amigos, pero ya no se miran como enemigos.`);
+    else m.push(`Mateo no te perdonó del todo el chiste, aunque no volvió a molestarte. Por ahora.`);
+  } else if(d[1]==='b') m.push(v5==='hot' ? `Tu «basta» de la mañana lo frenó solo un rato: Mateo siguió acumulando.` : `Mateo dejó de molestarte, aunque para varios en el salón quedaste como «el serio».`);
+  else m.push(v5==='hot' ? `Haberlo ignorado no lo apagó: Mateo solo estaba esperando su momento.` : `Mateo se aburrió y buscó a otro. Tú, mientras tanto, repasaste.`);
+  if(v5==='hot'){
+    if(d[5]==='a') m.push(`Terminaste peleándote con él a la salida: hay video, citación a acudientes y posible suspensión.`);
+    if(d[5]==='b') m.push(f.r5==='fail' ? `Intentaste hablarle de frente, pero con tanta gente alrededor no alcanzó: te empujó otra vez y te fuiste con la cabeza gacha. Lo que quedó fue el video.` : `En la esquina le hablaste de frente y frenaste todo. Mateo no se disculpó, pero tampoco volvió a empujarte.`);
+    if(d[5]==='c') m.push(`Buscaste a la vigilante y no hubo pelea. Quedó el apodo de «sapo» unos días y un «esto sigue el lunes» flotando.`);
+  } else {
+    if(d[5]==='a') m.push(`Con el celular roto y la mano sobre Tomás, pasaste de víctima a «el que agarró al de noveno».`);
+    if(d[5]==='b') m.push(`Dejaste ir a Tomás sin pedirle nada: en casa te tocó explicar la pantalla rota, y pagar parte tú.`);
+    if(d[5]==='c') m.push(`Con coordinación quedó todo por escrito, pero el trámite con los papás de Tomás tomó semanas y algunos dijeron que exageraste.`);
+  }
+  /* Redes */
+  let rd;
+  if(v4==='video'){
+    if(d[4]==='a') rd=`Te sumaste a la burla con un meme sobre Mateo. Por unas horas fuiste el gracioso; después, el que le echó leña a un incendio que ya estaba prendido.`;
+    else if(d[4]==='b') rd = f.r4==='fail'
+      ? `Le escribiste a Mateo para borrar todo y él subió tu mensaje al grupo: «el valiente pidiendo paz». Quisiste bajar la tensión y te salió el tiro por la culata.`
+      : `Le escribiste a Mateo y los dos borraron lo suyo. Alguien dijo «blandos», pero se apagó el incendio.`;
+    else rd=`La profe hizo borrar el video en diez minutos. Se acabó el incendio; a cambio quedó el apodo de «sapo» y un Mateo con un motivo nuevo.`;
+  } else if(v4==='rumor'){
+    if(d[4]==='a') rd = f.r4==='lie'
+      ? `Negaste el chisme en el grupo, pero lo que decían era cierto, y ${N} lo notó. Apagaste el chisme con una mentira.`
+      : `Cortaste el chisme con un mensaje corto y claro. No se acabó del todo, pero dejó de crecer.`;
+    else if(d[4]==='b') rd=`Le preguntaste primero a ${N} y supiste de dónde salió el chisme. No lo frenó, pero te ahorró reaccionar a ciegas.`;
+    else rd=`No dijiste nada. El chisme se enfrió solo para unos y quedó como verdad a medias para otros.`;
+  } else {
+    if(d[4]==='a') rd=`Reenviaste la captura de Juli. Ella supo quién fue y ya no te habla. Un «solo a unos amigos» nunca es solo a unos amigos.`;
+    else if(d[4]==='b') rd=`Avisaste a Juli en privado. No frenaste el chisme, pero ella no se enteró sola.`;
+    else rd = f.r4==='fail'
+      ? `Pediste que borraran la captura, pero con Mateo ya molesto la gente se ensañó más: ahora hablaban de Juli y de ti. Quisiste proteger y la expusiste más.`
+      : `Pediste que borraran la captura y funcionó. Algunos te dijeron «policía», pero la captura murió y Juli te dijo gracias.`;
+  }
+  return [
+    {icon:'📚', label:'En lo académico', text:ac},
+    {icon:'💬', label:`Con ${N}`, text:pa},
+    {icon:'🤝', label:'Con tus compañeros', text:m.join(' ')},
+    {icon:'📱', label:'En las redes', text:rd}
+  ];
+}
+
+/* Ecos: decisiones que volvieron después */
+function echoes(s){
+  const d=s.d, f=s.f, v4=variant4(s), v5=variant5(s), N=D(), e=[];
+  if(d[1]==='a' && v4==='video') e.push(`<b>El chiste de la mañana</b> quedó grabado y por la tarde era un video con cien reacciones.`);
+  if(d[1]==='a' && v5==='hot') e.push(`<b>Dejar mal parado a Mateo</b>, aunque fuera con humor, volvió a las 5:40 p. m. en la esquina.`);
+  if(d[1]==='b' && v5==='hot') e.push(`<b>Tu «basta» de la mañana</b> lo frenó solo un rato: Mateo siguió acumulando y apareció a la salida.`);
+  if(d[1]==='c' && v5==='hot') e.push(`<b>Ignorar a Mateo</b> te dio diez minutos de repaso, pero no lo apagó: acumuló hasta la salida.`);
+  if(f.repaso && d[2]==='a') e.push(`<b>Esos diez minutos de repaso</b> se notaron en el examen${f.nota>=3?': te alcanzaron para el paseo':''}.`);
+  if(f.mateoSabe) e.push(`<b>Mirar la hoja de Laura</b> no pasó inadvertido: Mateo lo vio, y eso le dio un arma para usar más tarde.`);
+  else if(d[2]==='b') e.push(`<b>Mirar la hoja de Laura</b> no se vio en el boletín, pero sí en cómo te mira ella desde entonces.`);
+  if(d[2]==='a' && !f.repaso) e.push(`<b>Presentar con lo que sabías</b> fue honesto, y costó el paseo: el 2,6 tuvo precio.`);
+  if(d[2]==='c') e.push(`<b>Pedir otra oportunidad</b> salvó el paseo, pero costó el fin de semana y una anotación en el observador.`);
+  if(d[3]==='a') e.push(`<b>Decir «sí» sin hablar</b> te dejó con la cabeza en otro lado toda la tarde${v5==='hot'?', y llegaste a la esquina a un milímetro de explotar':''}.`);
+  if(d[3]==='b') e.push(`<b>Poner condiciones</b> sonó a desconfianza, pero fue la conversación que los dos necesitaban.`);
+  if(d[3]==='a' && v4==='rumor') e.push(`<b>El «sí» en el patio</b> se convirtió en el chisme del chat.`);
+  if(d[3]==='c' && v4==='rumor') e.push(`<b>Tu «no» en el patio</b> llegó al chat distorsionado: una conversación privada se volvió chisme.`);
+  if(f.mintio) e.push(`<b>Negar el chisme</b> apagó el chat, pero abrió una grieta con ${N}.`);
+  if(v4==='video' && d[4]==='b' && f.r4==='fail') e.push(`<b>Escribirle a Mateo</b> no funcionó porque ya sabía lo de la hoja y la tensión estaba demasiado alta.`);
+  if(v4==='video' && d[4]==='c') e.push(`<b>Pedir ayuda a la profe</b> apagó el video, pero Mateo te guardó rencor y el apodo de «sapo» te siguió.`);
+  if(v4==='captura' && d[4]==='a') e.push(`<b>Reenviar «solo a unos amigos»</b> terminó llegando al grupo grande con tu nombre.`);
+  if(v4==='captura' && d[4]==='c' && f.r4==='fail') e.push(`<b>Pedir que borraran la captura</b> salió mal porque Mateo ya estaba molesto contigo.`);
+  if(v5==='hot' && d[5]==='b' && f.r5==='fail') e.push(`<b>Hablarle de frente a Mateo</b> no alcanzó: con tanta tensión acumulada, ya no era una conversación posible.`);
+  if(v5==='fall' && d[5]==='b') e.push(`<b>Dejar ir a Tomás sin pedirle nada</b> se volvió una discusión en casa.`);
+  return e.length ? e : [`Esta vez ninguna decisión regresó con fuerza. Otros recorridos esconden ecos distintos.`];
+}
+
+/* =====================================================================
+   FLUJO DEL JUEGO
+   ===================================================================== */
+function choose(sc, opt){
+  opt.apply(S);
+  if(opt.imp) S.imp++;
+  if(opt.av) S.av++;
+  S.heat = Math.max(0, S.heat);
+  S.d[sc.n] = opt.id;
+  S.log.push({ n:sc.n, title:sc.title, label:opt.label, text:opt.log });
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('active', e.id===id));
+  const el = $('#'+id); if(el) el.scrollTop = 0;
+}
+
+function veil(kicker, time, place, cb){
+  const v = $('#veil');
+  v.innerHTML = `<div class="vcard"><div class="vk">${kicker}</div><div class="vt">${time}</div><div class="vp">${place}</div></div>`;
+  v.classList.add('on');
+  let done=false;
+  const go = ()=>{ if(done) return; done=true; cb(); setTimeout(()=>v.classList.remove('on'), 80); };
+  v.onclick = go;
+  setTimeout(go, REDUCED ? 250 : 1700);
+}
+
+function drawPips(n, doneCurrent){
+  const el = $('#pips'); el.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const p=document.createElement('span');
+    p.className='pip'+( i<n || (i===n && doneCurrent) ? ' done' : (i===n ? ' cur':'') );
+    el.appendChild(p);
+  }
+}
+
+function paras(arr, startIdx){
+  return arr.map((p,i)=>{
+    const m = p.match(/^<span class="(say|note)">([\s\S]*)<\/span>$/);
+    const single = m && m[2].indexOf('</span>')===-1;
+    return `<p class="rv ${single?m[1]:''}" style="--i:${(startIdx||0)+i}">${single?m[2]:p}</p>`;
+  }).join('');
+}
+
+function drawTrail(){
+  const el=$('#trail');
+  el.innerHTML = '<h5>Tu día hasta ahora</h5>' + (S.log.length
+    ? '<ol>'+S.log.map(l=>`<li><b>${l.n}</b><span>${l.text}</span></li>`).join('')+'</ol>'
+    : '<div class="empty">Todavía no has decidido nada. Todo puede pasar.</div>');
+  el.scrollTop = el.scrollHeight;
+}
+function setArt(art, tone, shake){
+  const wrap = $('#art-wrap');
+  wrap.className = 'art-wrap' + (tone?' tone-'+tone:'');
+  $('#art').innerHTML = ART[art.kind](art);
+  $('#art').style.animation='none'; void $('#art').offsetWidth; $('#art').style.animation='';
+  if(shake && !REDUCED){ wrap.classList.add('shake'); }
+}
+
+function renderDecision(sc){
+  showScreen('screen-game');
+  drawPips(sc.n,false);
+  $('#hud-step').textContent = sc.kicker;
+  $('#hud-time').textContent = sc.time;
+  $('#chip').textContent = '📍 ' + sc.place;
+  setArt(sc.art, null, false); drawTrail();
+  const n = sc.text.length;
+  const panel = $('#panel');
+  panel.scrollTop = 0;
+  panel.innerHTML = `<div class="kicker">${sc.kicker}</div><h2>${sc.title}</h2>
+    <div class="story">${paras(sc.text,0)}</div>
+    <div class="q rv" style="--i:${n}">${sc.q}</div>
+    <div class="opts" id="opts">${shuffle(sc.options.map((_,i)=>i)).map((oi,pos)=>{ const o=sc.options[oi]; return `
+      <button class="opt" data-i="${oi}" data-pos="${pos}" style="--d:${(n*0.38+0.5+pos*0.18).toFixed(2)}s">
+        <span class="num">${pos+1}</span><span class="lbl">${o.label}<span class="think">${o.think}</span></span>
+      </button>`; }).join('')}</div>
+    <div class="keyhint">Tip: también puedes elegir con las teclas 1, 2 o 3.</div>`;
+  S.mode='decision'; S.scene=sc;
+  panel.querySelectorAll('.opt').forEach(b=> b.addEventListener('click', ()=> pick(sc, +b.dataset.i, b)));
+}
+
+function pick(sc, i, btn){
+  if(S.locked) return; S.locked=true;
+  const opt = sc.options[i];
+  btn.classList.add('picked'); $('#opts').classList.add('locked');
+  choose(sc, opt);
+  setTimeout(()=>{ S.locked=false; renderConsequence(sc, opt); }, 450);
+}
+
+function renderConsequence(sc, opt){
+  drawPips(sc.n,true);
+  setArt(sc.art, opt.tone, opt.tone==='hot'); drawTrail();
+  const lines = opt.cons(S);
+  const last = sc.n===5;
+  const panel = $('#panel'); panel.scrollTop = 0;
+  panel.innerHTML = `<div class="kicker">Lo que pasó</div><h2>${sc.title}</h2>
+    <div class="chosen"><b>Elegiste:</b> ${opt.label}</div>
+    <div class="story">${paras(lines,0)}</div>
+    <button class="btn-next" id="btn-next" style="--d:${(lines.length*0.38+0.4).toFixed(2)}s">${last?'Ver cómo termina →':'Continuar →'}</button>`;
+  S.mode='cons';
+  $('#btn-next').addEventListener('click', next);
+}
+
+function next(){
+  if(S.locked) return; S.locked=true;
+  S.step++;
+  if(S.step>=5){ S.locked=false; goEnding(); return; }
+  const sc = SCENES[S.step](S);
+  veil('Viernes', sc.time, sc.place, ()=>{ S.locked=false; renderDecision(sc); });
+}
+
+function startGame(){
+  S = newState(); S.locked=false;
+  showScreen('screen-game');
+  drawPips(0,false);
+  $('#hud-step').textContent='Prólogo'; $('#hud-time').textContent=PROLOGUE.time;
+  $('#chip').textContent='📍 '+PROLOGUE.place;
+  setArt(PROLOGUE.art,null,false); drawTrail();
+  const panel=$('#panel'); panel.scrollTop=0;
+  panel.innerHTML = `<div class="kicker">${PROLOGUE.kicker}</div><h2>${PROLOGUE.title}</h2><div class="story">${paras(PROLOGUE.text,0)}</div>
+    <button class="btn-next" id="btn-go" style="--d:${(PROLOGUE.text.length*0.38+0.3).toFixed(2)}s">Salir de casa →</button>`;
+  S.mode='cons';
+  $('#btn-go').addEventListener('click', ()=>{
+    if(S.locked) return; S.locked=true;
+    const sc = SCENES[0](S);
+    veil('Viernes', sc.time, sc.place, ()=>{ S.locked=false; renderDecision(sc); });
+  });
+}
+
+/* ---------- Pantalla final ---------- */
+function endingGrid(current){
+  const seen = loadSeen();
+  return `<div class="grid-end">${END_ORDER.map(id=>{
+    const on = seen.includes(id);
+    return `<div class="ge${on?' on':''}${id===current?' now':''}">${on?ENDINGS[id].title:'🔒 Final por descubrir'}</div>`;
+  }).join('')}</div>`;
+}
+function goEnding(){
+  const id = pickEnding(S), E = ENDINGS[id];
+  const seen = loadSeen(); if(!seen.includes(id)){ seen.push(id); saveSeen(seen); }
+  S.ending = id;
+  veil('Epílogo', 'Esa noche', 'Lo que dejó el día', ()=> renderEnding(id));
+}
+function renderEnding(id){
+  const E = ENDINGS[id], seen = loadSeen();
+  const cards = summaryCards(S), ech = echoes(S);
+  const questions = [
+    `¿Cuál de tus decisiones te pareció pequeña en el momento y terminó pesando más de lo que esperabas?`,
+    `¿En qué momento tuviste unos segundos para pensar antes de actuar? ¿Qué te ayudó, o qué te faltó, para aprovecharlos?`,
+    `¿Qué hizo que un conflicto creciera o se apagara: tus acciones, las de otros… o las dos?`,
+    `Si pudieras volver a una sola decisión, ¿cuál sería? ¿Qué otra salida habría?`
+  ];
+  $('#end-in').innerHTML = `
+    <div class="end-hero">${END_ART[E.art]()}
+      <div class="end-head"><span class="end-tag" style="color:${E.color}">Final ${END_ORDER.indexOf(id)+1} de ${END_ORDER.length} · ${seen.length}/${END_ORDER.length} descubiertos</span>
+      <h1 style="color:${E.color}">${E.title}</h1><p>${E.tag}</p></div></div>
+    <div class="sec"><h3>Cómo termina</h3><div class="story">${E.text(S).map(p=>`<p>${p}</p>`).join('')}</div></div>
+    <div class="sec"><h3>Cómo llegaste hasta aquí</h3><ol class="timeline">${S.log.map(l=>`<li><small>Decisión ${l.n} · ${l.title}</small>${l.text}</li>`).join('')}</ol></div>
+    <div class="sec"><h3>Qué consecuencias tuvo cada frente</h3><div class="cards">${cards.map(c=>`<div class="card"><h4><span>${c.icon}</span>${c.label}</h4><p>${c.text}</p></div>`).join('')}</div></div>
+    <div class="sec"><h3>Ecos: lo que volvió más tarde</h3><ul class="echo">${ech.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    <div class="sec"><h3>Para pensar y conversar</h3><ol class="think-list">${questions.map(q=>`<li>${q}</li>`).join('')}</ol></div>
+    <div class="sec"><h3>Tus finales</h3>${endingGrid(id)}</div>
+    <div class="actions"><button class="btn-main" id="btn-again">↻ Jugar de nuevo y descubrir otro final</button><button class="btn-ghost" id="btn-menu">Ir al inicio</button></div>`;
+  showScreen('screen-end');
+  $('#btn-again').addEventListener('click', startGame);
+  $('#btn-menu').addEventListener('click', goHome);
+}
+
+function goHome(){
+  $('#seen-count').textContent = loadSeen().length;
+  showScreen('screen-start');
+}
+
+/* ---------- Eventos globales ---------- */
+document.querySelectorAll('.who-b').forEach(b=>b.addEventListener('click',()=>{
+  G.chico = b.dataset.g==='chico';
+  document.querySelectorAll('.who-b').forEach(x=>x.classList.toggle('on',x===b));
+}));
+$('#btn-start').addEventListener('click', startGame);
+$('#btn-home').addEventListener('click', ()=>{ if(confirm('¿Volver al inicio? Se perderá esta partida.')) goHome(); });
+document.addEventListener('keydown', e=>{
+  if(!S || !$('#screen-game').classList.contains('active') || $('#veil').classList.contains('on')) return;
+  if(S.mode==='decision' && ['1','2','3'].includes(e.key)){
+    const b = document.querySelector(`.opt[data-pos="${+e.key-1}"]`); if(b) b.click();
+  } else if(S.mode==='cons' && (e.key==='Enter'||e.key===' ') && document.activeElement.tagName!=='BUTTON'){
+    const b = $('#btn-next')||$('#btn-go'); if(b){ e.preventDefault(); b.click(); }
+  }
+});
+goHome();
+</script>
+</body>
+</html>
